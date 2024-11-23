@@ -3,6 +3,7 @@ import Personal from './components/Personal';
 import Experience from './components/Experience';
 import Education from './components/Education';
 import Template from './components/Template';
+import './index.css';
 
 const App = () => {
   const [personal, setPersonal] = useState({
@@ -40,45 +41,51 @@ const App = () => {
 
   return (
     <>
-      <Personal
-        name={personal.name}
-        email={personal.email}
-        phone={personal.phone}
-        location={personal.location}
-        handleChange={handlePersonalChange}
-      />
-      <br />
-      <Education
-        school={education.school}
-        degree={education.degree}
-        startDate={education.startDate}
-        endDate={education.endDate}
-        handleChange={handleEducationChange}
-      />
-      <br />
-      <Experience
-        company={experience.company}
-        title={experience.title}
-        startDate={experience.startDate}
-        endDate={experience.endDate}
-        description={experience.description}
-        handleChange={handleExperienceChange}
-      />
-      <Template
-        name={personal.name}
-        email={personal.email}
-        phone={personal.phone}
-        location={personal.location}
-        schoolName={education.school}
-        schoolDegree={education.degree}
-        schoolStart={education.startDate}
-        schoolEnd={education.endDate}
-        companyName={experience.company}
-        companyTitle={experience.title}
-        companyStart={experience.startDate}
-        companyEnd={experience.endDate}
-        companyDescription={experience.description}
-      />
+      <div className="container">
+        <div className="input-section">
+          <Personal
+            name={personal.name}
+            email={personal.email}
+            phone={personal.phone}
+            location={personal.location}
+            handleChange={handlePersonalChange}
+          />
+          <br />
+          <Education
+            school={education.school}
+            degree={education.degree}
+            startDate={education.startDate}
+            endDate={education.endDate}
+            handleChange={handleEducationChange}
+          />
+          <br />
+          <Experience
+            company={experience.company}
+            title={experience.title}
+            startDate={experience.startDate}
+            endDate={experience.endDate}
+            description={experience.description}
+            handleChange={handleExperienceChange}
+          />
+        </div>
+        <div className="output-section">
+          <Template
+            name={personal.name}
+            email={personal.email}
+            phone={personal.phone}
+            location={personal.location}
+            schoolName={education.school}
+            schoolDegree={education.degree}
+            schoolStart={education.startDate}
+            schoolEnd={education.endDate}
+            companyName={experience.company}
+            companyTitle={experience.title}
+            companyStart={experience.startDate}
+            companyEnd={experience.endDate}
+            companyDescription={experience.description}
+          />
+        </div>
+      </div>
     </>
   );
 };

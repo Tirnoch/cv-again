@@ -3,6 +3,7 @@ const Experience = ({ handleChange }) => {
   return (
     <>
       <div className="input-container">
+        <h2>Working Info</h2>
         <div className="input-segment">
           <label htmlFor="company">Company: </label>
           <input

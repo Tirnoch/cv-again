@@ -3,6 +3,7 @@ const Education = ({ handleChange }) => {
   return (
     <>
       <div className="input-container">
+        <h2>Education Info</h2>
         <div className="input-segment">
           <label htmlFor={'school'}>School: </label>
           <input type="text" id={'school'} onChange={handleChange} />

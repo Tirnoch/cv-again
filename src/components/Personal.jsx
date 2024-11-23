@@ -3,6 +3,7 @@ const Personal = ({ handleChange }) => {
   return (
     <>
       <div className="input-container">
+        <h2>Personal Info</h2>
         <div className="input-segment">
           <label htmlFor={'name'}>Name: </label>
           <input type="text" id={'name'} onChange={handleChange} />
