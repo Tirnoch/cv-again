@@ -259,6 +259,7 @@ const App = () => {
 
   // Handle drag and drop reordering
   const handleDragEnd = (result) => {
+    console.log('Drag ended:', result);
     if (!result.destination) return;
 
     const items = Array.from(sectionOrder);
@@ -269,6 +270,7 @@ const App = () => {
       type: ACTIONS.UPDATE_SECTION_ORDER,
       sectionOrder: items,
     });
+    console.log('New section order:', items);
   };
 
   // Data management functions
@@ -460,10 +462,14 @@ const App = () => {
         aria-labelledby={headingId}
       >
         <h2 id={headingId} className="text-lg font-semibold flex items-center">
-          <span className="inline-block mr-2 text-gray-400" aria-hidden="true">
+          <span
+            className="inline-block mr-2 text-gray-400 hover:text-gray-700"
+            title="Drag to reorder"
+            aria-hidden="true"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-4 w-4"
+              className="h-5 w-5"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -472,7 +478,7 @@ const App = () => {
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth={2}
-                d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"
+                d="M4 6h16M4 12h16M4 18h16"
               />
             </svg>
           </span>
@@ -626,14 +632,14 @@ const App = () => {
           <div
             ref={provided.innerRef}
             {...provided.draggableProps}
-            className="mb-4 bg-white rounded shadow border border-gray-200"
+            className="mb-4 bg-white rounded shadow border border-gray-200 hover:shadow-md transition-shadow"
             id={sectionId}
             role="group"
             aria-labelledby={headingId}
           >
             <div
               {...provided.dragHandleProps}
-              className="cursor-move"
+              className="cursor-grab active:cursor-grabbing"
               aria-label={`Drag ${section.title} section to reorder`}
               tabIndex={0}
             >
@@ -690,6 +696,11 @@ const App = () => {
           <h2 id="form-sections-heading" className="sr-only">
             CV Form Sections
           </h2>
+
+          <p className="text-sm text-gray-600 mb-2 italic">
+            Tip: You can drag and drop sections to reorder them
+          </p>
+
           <DragDropContext onDragEnd={handleDragEnd}>
             <Droppable droppableId="sections">
               {(provided) => (
