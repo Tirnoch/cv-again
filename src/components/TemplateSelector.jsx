@@ -14,19 +14,13 @@ const TemplateSelector = ({ cvData }) => {
 
   const renderTemplate = () => {
     const templateProps = {
-      name: cvData.personal.name,
-      email: cvData.personal.email,
-      phone: cvData.personal.phone,
-      location: cvData.personal.location,
-      schoolName: cvData.education.school,
-      schoolDegree: cvData.education.degree,
-      schoolStart: cvData.education.startDate,
-      schoolEnd: cvData.education.endDate,
-      companyName: cvData.experience.company,
-      companyTitle: cvData.experience.title,
-      companyStart: cvData.experience.startDate,
-      companyEnd: cvData.experience.endDate,
-      companyDescription: cvData.experience.description,
+      personal: cvData.personal,
+      educationList: cvData.educationList,
+      experienceList: cvData.experienceList,
+      skills: cvData.skills,
+      projects: cvData.projects,
+      languages: cvData.languages,
+      visibleSections: cvData.visibleSections,
     };
 
     switch (selectedTemplate) {
@@ -142,19 +136,12 @@ TemplateSelector.propTypes = {
       phone: PropTypes.string.isRequired,
       location: PropTypes.string.isRequired,
     }).isRequired,
-    education: PropTypes.shape({
-      school: PropTypes.string.isRequired,
-      degree: PropTypes.string.isRequired,
-      startDate: PropTypes.string.isRequired,
-      endDate: PropTypes.string.isRequired,
-    }).isRequired,
-    experience: PropTypes.shape({
-      company: PropTypes.string.isRequired,
-      title: PropTypes.string.isRequired,
-      startDate: PropTypes.string.isRequired,
-      endDate: PropTypes.string.isRequired,
-      description: PropTypes.string.isRequired,
-    }).isRequired,
+    educationList: PropTypes.array.isRequired,
+    experienceList: PropTypes.array.isRequired,
+    skills: PropTypes.array.isRequired,
+    projects: PropTypes.array.isRequired,
+    languages: PropTypes.array.isRequired,
+    visibleSections: PropTypes.array.isRequired,
   }).isRequired,
 };
 
