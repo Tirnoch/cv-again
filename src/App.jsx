@@ -3,7 +3,6 @@ import Personal from './components/Personal';
 import Experience from './components/Experience';
 import Education from './components/Education';
 import Template from './components/Template';
-import './index.css';
 
 const App = () => {
   const [personal, setPersonal] = useState({
@@ -41,8 +40,8 @@ const App = () => {
 
   return (
     <>
-      <div className="container">
-        <div className="input-section">
+      <div className="grid min-w-full md:grid-cols-[1fr_3fr] grid-cols-1 gap-4 min-h-screen">
+        <div className="m-4 flex flex-col">
           <Personal
             name={personal.name}
             email={personal.email}
@@ -50,7 +49,7 @@ const App = () => {
             location={personal.location}
             handleChange={handlePersonalChange}
           />
-          <br />
+          <div className="my-4"></div>
           <Education
             school={education.school}
             degree={education.degree}
@@ -58,7 +57,7 @@ const App = () => {
             endDate={education.endDate}
             handleChange={handleEducationChange}
           />
-          <br />
+          <div className="my-4"></div>
           <Experience
             company={experience.company}
             title={experience.title}
@@ -68,7 +67,7 @@ const App = () => {
             handleChange={handleExperienceChange}
           />
         </div>
-        <div className="output-section">
+        <div className="m-4 flex flex-col border border-black shadow-md">
           <Template
             name={personal.name}
             email={personal.email}

@@ -1,4 +1,4 @@
-import '../template.css';
+import PropTypes from 'prop-types';
 
 const Template = ({
   name,
@@ -17,36 +17,68 @@ const Template = ({
 }) => {
   return (
     <>
-      <div className="primary-segment">
-        <p id="title-name">{name}</p>
-        <div className="personal-info">
+      <div className="bg-blue-300/60 border-2 border-blue-700 p-4 flex flex-col gap-4 items-center">
+        <p className="text-3xl font-bold leading-8">{name}</p>
+        <div className="flex gap-8 flex-wrap justify-center">
           <p>{email}</p>
           <p>{phone}</p>
           <p>{location}</p>
         </div>
       </div>
-      <div className="secondary-segment">
-        <div className="minor-segment">
-          <h1>Education</h1>
-          <p>School: {schoolName}</p>
-          <p>Degree: {schoolDegree}</p>
+      <div className="bg-black/10 p-4 flex-1">
+        <div className="mb-6">
+          <h1 className="text-xl font-semibold border-b-2 border-black mb-2">
+            Education
+          </h1>
           <p>
-            Time Period: {schoolStart} - {schoolEnd}
+            <span className="font-medium">School:</span> {schoolName}
+          </p>
+          <p>
+            <span className="font-medium">Degree:</span> {schoolDegree}
+          </p>
+          <p>
+            <span className="font-medium">Time Period:</span> {schoolStart} -{' '}
+            {schoolEnd}
           </p>
         </div>
-        <br />
-        <div className="minor-segment">
-          <h1>Work Experience</h1>
-          <p>Company: {companyName}</p>
-          <p>Position: {companyTitle}</p>
+        <div>
+          <h1 className="text-xl font-semibold border-b-2 border-black mb-2">
+            Work Experience
+          </h1>
           <p>
-            Time Perood: {companyStart} - {companyEnd}
+            <span className="font-medium">Company:</span> {companyName}
           </p>
-          <p>Descrtiption: {companyDescription}</p>
+          <p>
+            <span className="font-medium">Position:</span> {companyTitle}
+          </p>
+          <p>
+            <span className="font-medium">Time Period:</span> {companyStart} -{' '}
+            {companyEnd}
+          </p>
+          <p>
+            <span className="font-medium">Description:</span>{' '}
+            {companyDescription}
+          </p>
         </div>
       </div>
     </>
   );
+};
+
+Template.propTypes = {
+  name: PropTypes.string.isRequired,
+  email: PropTypes.string.isRequired,
+  phone: PropTypes.string.isRequired,
+  location: PropTypes.string.isRequired,
+  schoolName: PropTypes.string.isRequired,
+  schoolDegree: PropTypes.string.isRequired,
+  schoolStart: PropTypes.string.isRequired,
+  schoolEnd: PropTypes.string.isRequired,
+  companyName: PropTypes.string.isRequired,
+  companyTitle: PropTypes.string.isRequired,
+  companyStart: PropTypes.string.isRequired,
+  companyEnd: PropTypes.string.isRequired,
+  companyDescription: PropTypes.string.isRequired,
 };
 
 export default Template;
