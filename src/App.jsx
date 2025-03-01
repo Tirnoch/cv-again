@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import Personal from './components/Personal';
 import Education from './components/Education';
 import Experience from './components/Experience';
@@ -9,201 +9,133 @@ import Projects from './components/Projects';
 import Languages from './components/Languages';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
+// Import custom hooks
+import useFormValidation from './hooks/useValidation';
+import { useFormErrors } from './hooks/useFormErrors';
+import useLocalStorage from './hooks/useLocalStorage';
+
 const App = () => {
-  // Initialize state with localStorage data if available, otherwise use defaults
-  const [personal, setPersonal] = useState(() => {
-    const savedPersonal = localStorage.getItem('cv-personal');
-    return savedPersonal
-      ? JSON.parse(savedPersonal)
-      : {
-          name: 'Damla OZ',
-          email: 'tahmin@baka.lim',
-          phone: '+90123456',
-          location: 'Bursa, Turkiye',
-        };
+  // Use custom validation hooks
+  const { validateEmail, validatePhone, validateRequired, validateDate } =
+    useFormValidation();
+
+  // Use local storage hooks for state
+  const [personal, setPersonal] = useLocalStorage('cv-personal', {
+    name: 'Damla OZ',
+    email: 'tahmin@baka.lim',
+    phone: '+90123456',
+    location: 'Bursa, Turkiye',
   });
 
   // Multi-entry education data
-  const [educationList, setEducationList] = useState(() => {
-    const savedEducation = localStorage.getItem('cv-education-list');
-    return savedEducation
-      ? JSON.parse(savedEducation)
-      : [
-          {
-            id: 'edu-1',
-            school: 'Mimar Sinan University',
-            degree: 'Sanat ve Sepet Isleri',
-            startDate: '01.01.2001',
-            endDate: '02.02.2002',
-          },
-        ];
-  });
+  const [educationList, setEducationList] = useLocalStorage(
+    'cv-education-list',
+    [
+      {
+        id: 'edu-1',
+        school: 'Mimar Sinan University',
+        degree: 'Sanat ve Sepet Isleri',
+        startDate: '01.01.2001',
+        endDate: '02.02.2002',
+      },
+    ]
+  );
 
   // Multi-entry experience data
-  const [experienceList, setExperienceList] = useState(() => {
-    const savedExperience = localStorage.getItem('cv-experience-list');
-    return savedExperience
-      ? JSON.parse(savedExperience)
-      : [
-          {
-            id: 'exp-1',
-            company: 'Random Grafik Tasarim Atolyesi',
-            title: 'Grafik Tasarim Bacisi',
-            startDate: '03.03.2003',
-            endDate: '04.04.2004',
-            description: 'done this and that for some time for sure',
-          },
-        ];
-  });
+  const [experienceList, setExperienceList] = useLocalStorage(
+    'cv-experience-list',
+    [
+      {
+        id: 'exp-1',
+        company: 'Random Grafik Tasarim Atolyesi',
+        title: 'Grafik Tasarim Bacisi',
+        startDate: '03.03.2003',
+        endDate: '04.04.2004',
+        description: 'done this and that for some time for sure',
+      },
+    ]
+  );
 
   // Skills section
-  const [skills, setSkills] = useState(() => {
-    const savedSkills = localStorage.getItem('cv-skills');
-    return savedSkills ? JSON.parse(savedSkills) : [];
-  });
+  const [skills, setSkills] = useLocalStorage('cv-skills', []);
 
   // Projects section
-  const [projects, setProjects] = useState(() => {
-    const savedProjects = localStorage.getItem('cv-projects');
-    return savedProjects
-      ? JSON.parse(savedProjects)
-      : [
-          {
-            id: 'proj-1',
-            title: '',
-            description: '',
-            startDate: '',
-            endDate: '',
-            link: '',
-          },
-        ];
-  });
+  const [projects, setProjects] = useLocalStorage('cv-projects', [
+    {
+      id: 'proj-1',
+      title: '',
+      description: '',
+      startDate: '',
+      endDate: '',
+      link: '',
+    },
+  ]);
 
   // Languages section
-  const [languages, setLanguages] = useState(() => {
-    const savedLanguages = localStorage.getItem('cv-languages');
-    return savedLanguages ? JSON.parse(savedLanguages) : [];
-  });
+  const [languages, setLanguages] = useLocalStorage('cv-languages', []);
 
   // Section visibility and order
-  const [sectionOrder, setSectionOrder] = useState(() => {
-    const savedOrder = localStorage.getItem('cv-section-order');
-    return savedOrder
-      ? JSON.parse(savedOrder)
-      : [
-          { id: 'personal', title: 'Personal Details', visible: true },
-          { id: 'education', title: 'Education', visible: true },
-          { id: 'experience', title: 'Experience', visible: true },
-          { id: 'skills', title: 'Skills', visible: true },
-          { id: 'projects', title: 'Projects', visible: true },
-          { id: 'languages', title: 'Languages', visible: true },
-        ];
-  });
+  const [sectionOrder, setSectionOrder] = useLocalStorage('cv-section-order', [
+    { id: 'personal', title: 'Personal Details', visible: true },
+    { id: 'education', title: 'Education', visible: true },
+    { id: 'experience', title: 'Experience', visible: true },
+    { id: 'skills', title: 'Skills', visible: true },
+    { id: 'projects', title: 'Projects', visible: true },
+    { id: 'languages', title: 'Languages', visible: true },
+  ]);
 
   // Collapsible sections state
-  const [collapsedSections, setCollapsedSections] = useState(() => {
-    const savedCollapsed = localStorage.getItem('cv-collapsed-sections');
-    return savedCollapsed ? JSON.parse(savedCollapsed) : {};
-  });
+  const [collapsedSections, setCollapsedSections] = useLocalStorage(
+    'cv-collapsed-sections',
+    {}
+  );
 
-  // Save to localStorage whenever data changes (autosave)
-  useEffect(() => {
-    localStorage.setItem('cv-personal', JSON.stringify(personal));
-  }, [personal]);
-
-  useEffect(() => {
-    localStorage.setItem('cv-education-list', JSON.stringify(educationList));
-  }, [educationList]);
-
-  useEffect(() => {
-    localStorage.setItem('cv-experience-list', JSON.stringify(experienceList));
-  }, [experienceList]);
-
-  useEffect(() => {
-    localStorage.setItem('cv-skills', JSON.stringify(skills));
-  }, [skills]);
-
-  useEffect(() => {
-    localStorage.setItem('cv-projects', JSON.stringify(projects));
-  }, [projects]);
-
-  useEffect(() => {
-    localStorage.setItem('cv-languages', JSON.stringify(languages));
-  }, [languages]);
-
-  useEffect(() => {
-    localStorage.setItem('cv-section-order', JSON.stringify(sectionOrder));
-  }, [sectionOrder]);
-
-  useEffect(() => {
-    localStorage.setItem(
-      'cv-collapsed-sections',
-      JSON.stringify(collapsedSections)
-    );
-  }, [collapsedSections]);
-
-  // Validation state
-  const [errors, setErrors] = useState({
+  // Use custom error handling hook
+  const { errors, validateField, removeFieldError } = useFormErrors({
     personal: {},
     education: {},
     experience: {},
     projects: {},
   });
 
-  // Validation rules
-  const validateEmail = (email) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
-
-  const validatePhone = (phone) => {
-    const phoneRegex =
-      /^[+]?[(]?[0-9]{1,4}[)]?[-\s.]?[0-9]{1,4}[-\s.]?[0-9]{1,4}$/;
-    return phoneRegex.test(phone);
-  };
-
-  const validateRequired = (value) => {
-    return value.trim() !== '';
-  };
-
-  const validateDate = (date) => {
-    // Simple date validation for format DD.MM.YYYY or similar patterns
-    const dateRegex = /^(\d{1,2})[.\-/](\d{1,2})[.\-/](\d{2,4})$/;
-    return dateRegex.test(date);
-  };
-
   const handlePersonalChange = (e) => {
     const { id, value } = e.target;
     setPersonal({ ...personal, [id]: value });
 
     // Validate as user types
-    let newErrors = { ...errors };
-
-    if (id === 'name' && !validateRequired(value)) {
-      newErrors.personal.name = 'Name is required';
-    } else if (id === 'name') {
-      delete newErrors.personal.name;
-    }
-
-    if (id === 'email' && !validateEmail(value)) {
-      newErrors.personal.email = 'Please enter a valid email';
+    if (id === 'name') {
+      validateField(
+        'personal',
+        'name',
+        value,
+        validateRequired,
+        'Name is required'
+      );
     } else if (id === 'email') {
-      delete newErrors.personal.email;
-    }
-
-    if (id === 'phone' && !validatePhone(value)) {
-      newErrors.personal.phone = 'Please enter a valid phone number';
+      validateField(
+        'personal',
+        'email',
+        value,
+        validateEmail,
+        'Please enter a valid email'
+      );
     } else if (id === 'phone') {
-      delete newErrors.personal.phone;
-    }
-
-    if (id === 'location' && !validateRequired(value)) {
-      newErrors.personal.location = 'Location is required';
+      validateField(
+        'personal',
+        'phone',
+        value,
+        validatePhone,
+        'Please enter a valid phone number'
+      );
     } else if (id === 'location') {
-      delete newErrors.personal.location;
+      validateField(
+        'personal',
+        'location',
+        value,
+        validateRequired,
+        'Location is required'
+      );
     }
-
-    setErrors(newErrors);
   };
 
   // Functions for multiple education entries
@@ -218,65 +150,43 @@ const App = () => {
   };
 
   const validateEducationEntry = (index, id, value) => {
-    let newErrors = { ...errors };
-    if (!newErrors.education) newErrors.education = {};
-    if (!newErrors.education[index]) newErrors.education[index] = {};
-
-    if (id === 'school' && !validateRequired(value)) {
-      newErrors.education[index].school = 'School name is required';
-    } else if (id === 'school') {
-      delete newErrors.education[index].school;
-    }
-
-    if (id === 'degree' && !validateRequired(value)) {
-      newErrors.education[index].degree = 'Degree is required';
+    if (id === 'school') {
+      validateField(
+        'education',
+        'school',
+        value,
+        validateRequired,
+        'School name is required',
+        index
+      );
     } else if (id === 'degree') {
-      delete newErrors.education[index].degree;
-    }
-
-    if (id === 'startDate' && !validateDate(value)) {
-      newErrors.education[index].startDate =
-        'Please enter a valid date (DD.MM.YYYY)';
+      validateField(
+        'education',
+        'degree',
+        value,
+        validateRequired,
+        'Degree is required',
+        index
+      );
     } else if (id === 'startDate') {
-      delete newErrors.education[index].startDate;
-    }
-
-    if (id === 'endDate' && !validateDate(value)) {
-      newErrors.education[index].endDate =
-        'Please enter a valid date (DD.MM.YYYY)';
+      validateField(
+        'education',
+        'startDate',
+        value,
+        validateDate,
+        'Please enter a valid date (DD.MM.YYYY)',
+        index
+      );
     } else if (id === 'endDate') {
-      delete newErrors.education[index].endDate;
+      validateField(
+        'education',
+        'endDate',
+        value,
+        validateDate,
+        'Please enter a valid date (DD.MM.YYYY)',
+        index
+      );
     }
-
-    setErrors(newErrors);
-  };
-
-  const addEducationEntry = () => {
-    const newId = `edu-${Date.now()}`;
-    setEducationList([
-      ...educationList,
-      {
-        id: newId,
-        school: '',
-        degree: '',
-        startDate: '',
-        endDate: '',
-      },
-    ]);
-  };
-
-  const removeEducationEntry = (index) => {
-    if (educationList.length <= 1) return; // Always keep at least one entry
-    const newList = [...educationList];
-    newList.splice(index, 1);
-    setEducationList(newList);
-
-    // Remove errors for the deleted entry
-    const newErrors = { ...errors };
-    if (newErrors.education && newErrors.education[index]) {
-      delete newErrors.education[index];
-    }
-    setErrors(newErrors);
   };
 
   // Functions for multiple experience entries
@@ -291,66 +201,52 @@ const App = () => {
   };
 
   const validateExperienceEntry = (index, id, value) => {
-    let newErrors = { ...errors };
-    if (!newErrors.experience) newErrors.experience = {};
-    if (!newErrors.experience[index]) newErrors.experience[index] = {};
-
-    if (id === 'company' && !validateRequired(value)) {
-      newErrors.experience[index].company = 'Company name is required';
-    } else if (id === 'company') {
-      delete newErrors.experience[index].company;
-    }
-
-    if (id === 'title' && !validateRequired(value)) {
-      newErrors.experience[index].title = 'Job title is required';
+    if (id === 'company') {
+      validateField(
+        'experience',
+        'company',
+        value,
+        validateRequired,
+        'Company name is required',
+        index
+      );
     } else if (id === 'title') {
-      delete newErrors.experience[index].title;
-    }
-
-    if (id === 'startDate' && !validateDate(value)) {
-      newErrors.experience[index].startDate =
-        'Please enter a valid date (DD.MM.YYYY)';
+      validateField(
+        'experience',
+        'title',
+        value,
+        validateRequired,
+        'Job title is required',
+        index
+      );
     } else if (id === 'startDate') {
-      delete newErrors.experience[index].startDate;
-    }
-
-    if (id === 'endDate' && !validateDate(value)) {
-      newErrors.experience[index].endDate =
-        'Please enter a valid date (DD.MM.YYYY)';
+      validateField(
+        'experience',
+        'startDate',
+        value,
+        validateDate,
+        'Please enter a valid date (DD.MM.YYYY)',
+        index
+      );
     } else if (id === 'endDate') {
-      delete newErrors.experience[index].endDate;
+      validateField(
+        'experience',
+        'endDate',
+        value,
+        validateDate,
+        'Please enter a valid date (DD.MM.YYYY)',
+        index
+      );
+    } else if (id === 'description') {
+      validateField(
+        'experience',
+        'description',
+        value,
+        validateRequired,
+        'Description is required',
+        index
+      );
     }
-
-    setErrors(newErrors);
-  };
-
-  const addExperienceEntry = () => {
-    const newId = `exp-${Date.now()}`;
-    setExperienceList([
-      ...experienceList,
-      {
-        id: newId,
-        company: '',
-        title: '',
-        startDate: '',
-        endDate: '',
-        description: '',
-      },
-    ]);
-  };
-
-  const removeExperienceEntry = (index) => {
-    if (experienceList.length <= 1) return; // Always keep at least one entry
-    const newList = [...experienceList];
-    newList.splice(index, 1);
-    setExperienceList(newList);
-
-    // Remove errors for the deleted entry
-    const newErrors = { ...errors };
-    if (newErrors.experience && newErrors.experience[index]) {
-      delete newErrors.experience[index];
-    }
-    setErrors(newErrors);
   };
 
   // Skills management
@@ -542,78 +438,107 @@ const App = () => {
 
   // Validate all fields on component mount
   useEffect(() => {
-    const newErrors = {
-      personal: {},
-      education: {},
-      experience: {},
-    };
-
     // Validate personal info
-    if (!validateRequired(personal.name)) {
-      newErrors.personal.name = 'Name is required';
-    }
-
-    if (!validateEmail(personal.email)) {
-      newErrors.personal.email = 'Please enter a valid email';
-    }
-
-    if (!validatePhone(personal.phone)) {
-      newErrors.personal.phone = 'Please enter a valid phone number';
-    }
-
-    if (!validateRequired(personal.location)) {
-      newErrors.personal.location = 'Location is required';
-    }
+    validateField(
+      'personal',
+      'name',
+      personal.name,
+      validateRequired,
+      'Name is required'
+    );
+    validateField(
+      'personal',
+      'email',
+      personal.email,
+      validateEmail,
+      'Please enter a valid email'
+    );
+    validateField(
+      'personal',
+      'phone',
+      personal.phone,
+      validatePhone,
+      'Please enter a valid phone number'
+    );
+    validateField(
+      'personal',
+      'location',
+      personal.location,
+      validateRequired,
+      'Location is required'
+    );
 
     // Validate education entries
-    newErrors.education = {};
     educationList.forEach((edu, index) => {
-      newErrors.education[index] = {};
-
-      if (!validateRequired(edu.school)) {
-        newErrors.education[index].school = 'School name is required';
-      }
-
-      if (!validateRequired(edu.degree)) {
-        newErrors.education[index].degree = 'Degree is required';
-      }
-
-      if (!validateDate(edu.startDate)) {
-        newErrors.education[index].startDate =
-          'Please enter a valid date (DD.MM.YYYY)';
-      }
-
-      if (!validateDate(edu.endDate)) {
-        newErrors.education[index].endDate =
-          'Please enter a valid date (DD.MM.YYYY)';
-      }
+      validateField(
+        'education',
+        'school',
+        edu.school,
+        validateRequired,
+        'School name is required',
+        index
+      );
+      validateField(
+        'education',
+        'degree',
+        edu.degree,
+        validateRequired,
+        'Degree is required',
+        index
+      );
+      validateField(
+        'education',
+        'startDate',
+        edu.startDate,
+        validateDate,
+        'Please enter a valid date (DD.MM.YYYY)',
+        index
+      );
+      validateField(
+        'education',
+        'endDate',
+        edu.endDate,
+        validateDate,
+        'Please enter a valid date (DD.MM.YYYY)',
+        index
+      );
     });
 
     // Validate experience entries
-    newErrors.experience = {};
     experienceList.forEach((exp, index) => {
-      newErrors.experience[index] = {};
-
-      if (!validateRequired(exp.company)) {
-        newErrors.experience[index].company = 'Company name is required';
-      }
-
-      if (!validateRequired(exp.title)) {
-        newErrors.experience[index].title = 'Job title is required';
-      }
-
-      if (!validateDate(exp.startDate)) {
-        newErrors.experience[index].startDate =
-          'Please enter a valid date (DD.MM.YYYY)';
-      }
-
-      if (!validateDate(exp.endDate)) {
-        newErrors.experience[index].endDate =
-          'Please enter a valid date (DD.MM.YYYY)';
-      }
+      validateField(
+        'experience',
+        'company',
+        exp.company,
+        validateRequired,
+        'Company name is required',
+        index
+      );
+      validateField(
+        'experience',
+        'title',
+        exp.title,
+        validateRequired,
+        'Job title is required',
+        index
+      );
+      validateField(
+        'experience',
+        'startDate',
+        exp.startDate,
+        validateDate,
+        'Please enter a valid date (DD.MM.YYYY)',
+        index
+      );
+      validateField(
+        'experience',
+        'endDate',
+        exp.endDate,
+        validateDate,
+        'Please enter a valid date (DD.MM.YYYY)',
+        index
+      );
     });
-
-    setErrors(newErrors);
   }, [
     validateRequired,
     validateEmail,
@@ -822,6 +747,55 @@ const App = () => {
         )}
       </Draggable>
     );
+  };
+
+  const addEducationEntry = () => {
+    const newId = `edu-${Date.now()}`;
+    setEducationList([
+      ...educationList,
+      {
+        id: newId,
+        school: '',
+        degree: '',
+        startDate: '',
+        endDate: '',
+      },
+    ]);
+  };
+
+  const removeEducationEntry = (index) => {
+    if (educationList.length <= 1) return; // Always keep at least one entry
+    const newList = [...educationList];
+    newList.splice(index, 1);
+    setEducationList(newList);
+
+    // Remove errors for the deleted entry
+    removeFieldError('education', index);
+  };
+
+  const addExperienceEntry = () => {
+    const newId = `exp-${Date.now()}`;
+    setExperienceList([
+      ...experienceList,
+      {
+        id: newId,
+        company: '',
+        title: '',
+        startDate: '',
+        endDate: '',
+        description: '',
+      },
+    ]);
+  };
+
+  const removeExperienceEntry = (index) => {
+    if (experienceList.length <= 1) return; // Always keep at least one entry
+    const newList = [...experienceList];
+    newList.splice(index, 1);
+    setExperienceList(newList);
+
+    // Remove errors for the deleted entry
+    removeFieldError('experience', index);
   };
 
   return (
