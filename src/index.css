@@ -15,6 +15,28 @@
   }
 }
 
+/* Print styles */
+@media print {
+  @page {
+    size: A4;
+    margin: 0;
+  }
+
+  body {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Reset heights for print */
+  html,
+  body,
+  #root,
+  main {
+    height: auto !important;
+    overflow: visible !important;
+  }
+}
+
 /* We'll remove these CSS classes as we'll replace them with Tailwind classes in the components */
 
 .container {

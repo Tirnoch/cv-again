@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import Personal from './components/Personal';
 import Experience from './components/Experience';
 import Education from './components/Education';
-import Template from './components/Template';
+import TemplateSelector from './components/TemplateSelector';
 
 const App = () => {
   const [personal, setPersonal] = useState({
@@ -235,10 +235,17 @@ const App = () => {
     experience.endDate,
   ]);
 
+  // Combined CV data for template selector
+  const cvData = {
+    personal,
+    education,
+    experience,
+  };
+
   return (
     <>
-      <div className="grid min-w-full md:grid-cols-[1fr_3fr] grid-cols-1 gap-4 min-h-screen">
-        <div className="m-4 flex flex-col">
+      <div className="grid min-w-full md:grid-cols-[1fr_3fr] grid-cols-1 gap-4 min-h-screen print:block">
+        <div className="m-4 flex flex-col print:hidden">
           <Personal
             name={personal.name}
             email={personal.email}
@@ -267,22 +274,8 @@ const App = () => {
             errors={errors.experience}
           />
         </div>
-        <div className="m-4 flex flex-col border border-black shadow-md">
-          <Template
-            name={personal.name}
-            email={personal.email}
-            phone={personal.phone}
-            location={personal.location}
-            schoolName={education.school}
-            schoolDegree={education.degree}
-            schoolStart={education.startDate}
-            schoolEnd={education.endDate}
-            companyName={experience.company}
-            companyTitle={experience.title}
-            companyStart={experience.startDate}
-            companyEnd={experience.endDate}
-            companyDescription={experience.description}
-          />
+        <div className="m-4 flex flex-col border border-black shadow-md print:m-0 print:border-0 print:shadow-none print:w-full">
+          <TemplateSelector cvData={cvData} />
         </div>
       </div>
     </>

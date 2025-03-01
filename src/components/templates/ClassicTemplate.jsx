@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 
-const Template = ({
+const ClassicTemplate = ({
   name,
   email,
   phone,
@@ -65,7 +65,7 @@ const Template = ({
   );
 };
 
-Template.propTypes = {
+ClassicTemplate.propTypes = {
   name: PropTypes.string.isRequired,
   email: PropTypes.string.isRequired,
   phone: PropTypes.string.isRequired,
@@ -81,4 +81,4 @@ Template.propTypes = {
   companyDescription: PropTypes.string.isRequired,
 };
 
-export default Template;
+export default ClassicTemplate;
