@@ -4,7 +4,14 @@ import PropTypes from 'prop-types';
 const Skills = ({ skills, handleChange }) => {
   const [newSkill, setNewSkill] = useState('');
 
-  const addSkill = () => {
+  // Event handler to stop propagation
+  const stopPropagation = (e) => {
+    e.stopPropagation();
+  };
+
+  const addSkill = (e) => {
+    if (e) stopPropagation(e);
+
     if (newSkill.trim() === '') return;
     const skill = newSkill.trim();
 
@@ -16,22 +23,30 @@ const Skills = ({ skills, handleChange }) => {
     setNewSkill('');
   };
 
-  const removeSkill = (skillToRemove) => {
+  const removeSkill = (e, skillToRemove) => {
+    if (e) stopPropagation(e);
     handleChange(skills.filter((skill) => skill !== skillToRemove));
   };
 
   const handleKeyDown = (e) => {
+    stopPropagation(e);
     if (e.key === 'Enter') {
       e.preventDefault();
       addSkill();
     }
   };
 
+  const handleInputChange = (e) => {
+    stopPropagation(e);
+    setNewSkill(e.target.value);
+  };
+
   return (
-    <div>
-      <h2 className="text-xl font-semibold mb-4" id="skills-heading">
-        Skills
-      </h2>
+    <div
+      onClick={stopPropagation}
+      onMouseDown={stopPropagation}
+      onTouchStart={stopPropagation}
+    >
       <div
         className="flex flex-col"
         role="region"
@@ -45,14 +60,18 @@ const Skills = ({ skills, handleChange }) => {
             type="text"
             id="skill-input"
             value={newSkill}
-            onChange={(e) => setNewSkill(e.target.value)}
+            onChange={handleInputChange}
             onKeyDown={handleKeyDown}
+            onMouseDown={stopPropagation}
+            onTouchStart={stopPropagation}
             placeholder="Add a skill (e.g. React, JavaScript, Design)"
             className="border rounded p-2 flex-1 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             aria-describedby="skill-instructions"
           />
           <button
             onClick={addSkill}
+            onMouseDown={stopPropagation}
+            onTouchStart={stopPropagation}
             className="ml-2 px-3 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-blue-700 focus:ring-offset-2"
             aria-label="Add skill"
           >
@@ -81,7 +100,9 @@ const Skills = ({ skills, handleChange }) => {
               >
                 <span>{skill}</span>
                 <button
-                  onClick={() => removeSkill(skill)}
+                  onClick={(e) => removeSkill(e, skill)}
+                  onMouseDown={stopPropagation}
+                  onTouchStart={stopPropagation}
                   className="ml-2 text-gray-400 hover:text-red-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1 rounded-full"
                   aria-label={`Remove ${skill}`}
                 >

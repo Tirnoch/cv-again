@@ -8,27 +8,16 @@ const MinimalTemplate = ({
   projects,
   languages,
   visibleSections,
+  sectionOrder,
 }) => {
-  return (
-    <div className="flex flex-col min-h-full bg-white p-10 font-light">
-      {/* Header */}
-      <div className="mb-8 text-center">
-        <h1 className="text-3xl font-normal tracking-wide mb-3">
-          {personal.name}
-        </h1>
-        <div className="flex flex-wrap justify-center gap-3 text-sm text-gray-600">
-          <span>{personal.email}</span>
-          <span>•</span>
-          <span>{personal.phone}</span>
-          <span>•</span>
-          <span>{personal.location}</span>
-        </div>
-      </div>
+  // Render function for each section type
+  const renderSection = (sectionId) => {
+    if (!visibleSections.includes(sectionId)) return null;
 
-      <div className="flex-1 max-w-2xl mx-auto w-full">
-        {/* Experience Section */}
-        {visibleSections.includes('experience') && (
-          <section className="mb-8">
+    switch (sectionId) {
+      case 'experience':
+        return (
+          <section key={sectionId} className="mb-8">
             <h2 className="text-lg uppercase tracking-widest mb-4 text-gray-500 border-b border-gray-200 pb-1">
               Experience
             </h2>
@@ -47,11 +36,11 @@ const MinimalTemplate = ({
               </div>
             ))}
           </section>
-        )}
+        );
 
-        {/* Education Section */}
-        {visibleSections.includes('education') && (
-          <section className="mb-8">
+      case 'education':
+        return (
+          <section key={sectionId} className="mb-8">
             <h2 className="text-lg uppercase tracking-widest mb-4 text-gray-500 border-b border-gray-200 pb-1">
               Education
             </h2>
@@ -67,11 +56,11 @@ const MinimalTemplate = ({
               </div>
             ))}
           </section>
-        )}
+        );
 
-        {/* Skills Section */}
-        {visibleSections.includes('skills') && skills.length > 0 && (
-          <section className="mb-8">
+      case 'skills':
+        return skills.length > 0 ? (
+          <section key={sectionId} className="mb-8">
             <h2 className="text-lg uppercase tracking-widest mb-4 text-gray-500 border-b border-gray-200 pb-1">
               Skills
             </h2>
@@ -83,11 +72,11 @@ const MinimalTemplate = ({
               ))}
             </div>
           </section>
-        )}
+        ) : null;
 
-        {/* Projects Section */}
-        {visibleSections.includes('projects') && (
-          <section className="mb-8">
+      case 'projects':
+        return (
+          <section key={sectionId} className="mb-8">
             <h2 className="text-lg uppercase tracking-widest mb-4 text-gray-500 border-b border-gray-200 pb-1">
               Projects
             </h2>
@@ -115,11 +104,11 @@ const MinimalTemplate = ({
               </div>
             ))}
           </section>
-        )}
+        );
 
-        {/* Languages Section */}
-        {visibleSections.includes('languages') && languages.length > 0 && (
-          <section className="mb-8">
+      case 'languages':
+        return languages.length > 0 ? (
+          <section key={sectionId} className="mb-8">
             <h2 className="text-lg uppercase tracking-widest mb-4 text-gray-500 border-b border-gray-200 pb-1">
               Languages
             </h2>
@@ -134,7 +123,34 @@ const MinimalTemplate = ({
               ))}
             </div>
           </section>
-        )}
+        ) : null;
+
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div className="flex flex-col min-h-full bg-white p-10 font-light">
+      {/* Header */}
+      <div className="mb-8 text-center">
+        <h1 className="text-3xl font-normal tracking-wide mb-3">
+          {personal.name}
+        </h1>
+        <div className="flex flex-wrap justify-center gap-3 text-sm text-gray-600">
+          <span>{personal.email}</span>
+          <span>•</span>
+          <span>{personal.phone}</span>
+          <span>•</span>
+          <span>{personal.location}</span>
+        </div>
+      </div>
+
+      <div className="flex-1 max-w-2xl mx-auto w-full">
+        {/* Render sections in the order specified by sectionOrder */}
+        {sectionOrder
+          .filter((section) => section.visible && section.id !== 'personal')
+          .map((section) => renderSection(section.id))}
       </div>
     </div>
   );
@@ -153,6 +169,7 @@ MinimalTemplate.propTypes = {
   projects: PropTypes.array.isRequired,
   languages: PropTypes.array.isRequired,
   visibleSections: PropTypes.array.isRequired,
+  sectionOrder: PropTypes.array.isRequired,
 };
 
 export default MinimalTemplate;

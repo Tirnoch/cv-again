@@ -18,7 +18,25 @@
   input,
   textarea,
   select,
+  button,
+  [role='button'],
+  a {
+    pointer-events: auto !important;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Style to disable drag behavior on form elements */
+  input,
+  textarea,
+  select,
   button {
+    -webkit-user-drag: none;
+    user-drag: none;
+  }
+
+  /* Stop draggable elements from capturing input elements */
+  .p-4 * {
     pointer-events: auto !important;
   }
 }

@@ -8,22 +8,16 @@ const ClassicTemplate = ({
   projects,
   languages,
   visibleSections,
+  sectionOrder,
 }) => {
-  return (
-    <>
-      <div className="bg-blue-300/60 border-2 border-blue-700 p-4 flex flex-col gap-4 items-center">
-        <p className="text-3xl font-bold leading-8">{personal.name}</p>
-        <div className="flex gap-8 flex-wrap justify-center">
-          <p>{personal.email}</p>
-          <p>{personal.phone}</p>
-          <p>{personal.location}</p>
-        </div>
-      </div>
+  // Render function for each section type
+  const renderSection = (sectionId) => {
+    if (!visibleSections.includes(sectionId)) return null;
 
-      <div className="bg-black/10 p-4 flex-1">
-        {/* Education Section */}
-        {visibleSections.includes('education') && (
-          <div className="mb-6">
+    switch (sectionId) {
+      case 'education':
+        return (
+          <div key={sectionId} className="mb-6">
             <h1 className="text-xl font-semibold border-b-2 border-black mb-4">
               Education
             </h1>
@@ -37,11 +31,11 @@ const ClassicTemplate = ({
               </div>
             ))}
           </div>
-        )}
+        );
 
-        {/* Experience Section */}
-        {visibleSections.includes('experience') && (
-          <div className="mb-6">
+      case 'experience':
+        return (
+          <div key={sectionId} className="mb-6">
             <h1 className="text-xl font-semibold border-b-2 border-black mb-4">
               Work Experience
             </h1>
@@ -56,11 +50,11 @@ const ClassicTemplate = ({
               </div>
             ))}
           </div>
-        )}
+        );
 
-        {/* Skills Section */}
-        {visibleSections.includes('skills') && skills.length > 0 && (
-          <div className="mb-6">
+      case 'skills':
+        return skills.length > 0 ? (
+          <div key={sectionId} className="mb-6">
             <h1 className="text-xl font-semibold border-b-2 border-black mb-4">
               Skills
             </h1>
@@ -75,11 +69,11 @@ const ClassicTemplate = ({
               ))}
             </div>
           </div>
-        )}
+        ) : null;
 
-        {/* Projects Section */}
-        {visibleSections.includes('projects') && (
-          <div className="mb-6">
+      case 'projects':
+        return (
+          <div key={sectionId} className="mb-6">
             <h1 className="text-xl font-semibold border-b-2 border-black mb-4">
               Projects
             </h1>
@@ -105,11 +99,11 @@ const ClassicTemplate = ({
               </div>
             ))}
           </div>
-        )}
+        );
 
-        {/* Languages Section */}
-        {visibleSections.includes('languages') && languages.length > 0 && (
-          <div className="mb-6">
+      case 'languages':
+        return languages.length > 0 ? (
+          <div key={sectionId} className="mb-6">
             <h1 className="text-xl font-semibold border-b-2 border-black mb-4">
               Languages
             </h1>
@@ -124,7 +118,29 @@ const ClassicTemplate = ({
               ))}
             </div>
           </div>
-        )}
+        ) : null;
+
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <>
+      <div className="bg-blue-300/60 border-2 border-blue-700 p-4 flex flex-col gap-4 items-center">
+        <p className="text-3xl font-bold leading-8">{personal.name}</p>
+        <div className="flex gap-8 flex-wrap justify-center">
+          <p>{personal.email}</p>
+          <p>{personal.phone}</p>
+          <p>{personal.location}</p>
+        </div>
+      </div>
+
+      <div className="bg-black/10 p-4 flex-1">
+        {/* Render sections according to sectionOrder */}
+        {sectionOrder
+          .filter((section) => section.visible && section.id !== 'personal')
+          .map((section) => renderSection(section.id))}
       </div>
     </>
   );
@@ -143,6 +159,7 @@ ClassicTemplate.propTypes = {
   projects: PropTypes.array.isRequired,
   languages: PropTypes.array.isRequired,
   visibleSections: PropTypes.array.isRequired,
+  sectionOrder: PropTypes.array.isRequired,
 };
 
 export default ClassicTemplate;

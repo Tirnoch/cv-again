@@ -1,15 +1,32 @@
 import PropTypes from 'prop-types';
 
-const Personal = ({ handleChange, errors = {}, personal = {} }) => {
+const Personal = ({
+  handleChange,
+  errors = {},
+  name,
+  email,
+  phone,
+  location,
+}) => {
+  // Event handler to ensure events don't propagate to drag and drop handlers
+  const stopPropagation = (e) => {
+    e.stopPropagation();
+  };
+
+  // Custom handler to ensure proper propagation control and event handling
+  const handleInputChange = (e) => {
+    stopPropagation(e);
+    handleChange(e);
+  };
+
   return (
     <>
-      <div className="bg-teal-100/40 border-2 border-teal-700/70 flex flex-col items-end flex-wrap flex-1 max-w-md p-2 rounded-md">
-        <h2
-          className="self-center text-2xl font-semibold mb-3"
-          id="personal-heading"
-        >
-          Personal Info
-        </h2>
+      <div
+        className="bg-teal-100/40 border-2 border-teal-700/70 flex flex-col items-end flex-wrap flex-1 max-w-md p-2 rounded-md"
+        onClick={stopPropagation}
+        onMouseDown={stopPropagation}
+        onTouchStart={stopPropagation}
+      >
         <div className="p-1 w-full flex flex-col">
           <div className="w-full flex">
             <label htmlFor="name" className="flex-1 flex justify-end pr-1">
@@ -19,8 +36,11 @@ const Personal = ({ handleChange, errors = {}, personal = {} }) => {
               type="text"
               id="name"
               name="name"
-              value={personal.name || ''}
-              onChange={handleChange}
+              value={name || ''}
+              onChange={handleInputChange}
+              onMouseDown={stopPropagation}
+              onTouchStart={stopPropagation}
+              onKeyDown={stopPropagation}
               aria-invalid={errors.name ? 'true' : 'false'}
               aria-describedby={errors.name ? 'name-error' : undefined}
               className={`w-1/2 border ${
@@ -47,8 +67,11 @@ const Personal = ({ handleChange, errors = {}, personal = {} }) => {
               type="email"
               id="email"
               name="email"
-              value={personal.email || ''}
-              onChange={handleChange}
+              value={email || ''}
+              onChange={handleInputChange}
+              onMouseDown={stopPropagation}
+              onTouchStart={stopPropagation}
+              onKeyDown={stopPropagation}
               aria-invalid={errors.email ? 'true' : 'false'}
               aria-describedby={errors.email ? 'email-error' : undefined}
               className={`w-1/2 border ${
@@ -75,8 +98,11 @@ const Personal = ({ handleChange, errors = {}, personal = {} }) => {
               type="tel"
               id="phone"
               name="phone"
-              value={personal.phone || ''}
-              onChange={handleChange}
+              value={phone || ''}
+              onChange={handleInputChange}
+              onMouseDown={stopPropagation}
+              onTouchStart={stopPropagation}
+              onKeyDown={stopPropagation}
               aria-invalid={errors.phone ? 'true' : 'false'}
               aria-describedby={errors.phone ? 'phone-error' : undefined}
               className={`w-1/2 border ${
@@ -103,8 +129,11 @@ const Personal = ({ handleChange, errors = {}, personal = {} }) => {
               type="text"
               id="location"
               name="location"
-              value={personal.location || ''}
-              onChange={handleChange}
+              value={location || ''}
+              onChange={handleInputChange}
+              onMouseDown={stopPropagation}
+              onTouchStart={stopPropagation}
+              onKeyDown={stopPropagation}
               aria-invalid={errors.location ? 'true' : 'false'}
               aria-describedby={errors.location ? 'location-error' : undefined}
               className={`w-1/2 border ${
@@ -130,7 +159,10 @@ const Personal = ({ handleChange, errors = {}, personal = {} }) => {
 Personal.propTypes = {
   handleChange: PropTypes.func.isRequired,
   errors: PropTypes.object,
-  personal: PropTypes.object,
+  name: PropTypes.string,
+  email: PropTypes.string,
+  phone: PropTypes.string,
+  location: PropTypes.string,
 };
 
 export default Personal;

@@ -21,6 +21,7 @@ const TemplateSelector = ({ cvData }) => {
       projects: cvData.projects,
       languages: cvData.languages,
       visibleSections: cvData.visibleSections,
+      sectionOrder: cvData.sectionOrder,
     };
 
     switch (selectedTemplate) {
@@ -168,6 +169,7 @@ TemplateSelector.propTypes = {
     projects: PropTypes.array.isRequired,
     languages: PropTypes.array.isRequired,
     visibleSections: PropTypes.array.isRequired,
+    sectionOrder: PropTypes.array.isRequired,
   }).isRequired,
 };
 

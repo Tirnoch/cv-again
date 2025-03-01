@@ -7,19 +7,36 @@ const Experience = ({
   removeEntry,
   errors,
 }) => {
+  // Event handler to stop propagation
+  const stopPropagation = (e) => {
+    e.stopPropagation();
+  };
+
+  // Custom handler to ensure proper propagation control and event handling
+  const handleExperienceInput = (e, index) => {
+    stopPropagation(e);
+    handleChange(e, index);
+  };
+
   return (
-    <div role="region" aria-labelledby="experience-heading">
+    <div
+      role="region"
+      aria-labelledby="experience-heading"
+      onClick={stopPropagation}
+      onMouseDown={stopPropagation}
+      onTouchStart={stopPropagation}
+    >
       <h3 id="experience-heading" className="sr-only">
-        Work Experience
+        Professional Experience
       </h3>
       {experienceList.map((experience, index) => (
         <div
           key={experience.id}
-          className="mb-4 pb-4 border-b last:border-b-0"
+          className="mb-6 pb-6 border-b last:border-b-0 border-gray-200"
           role="group"
           aria-labelledby={`experience-entry-${index}`}
         >
-          <div className="flex justify-between items-center mb-2">
+          <div className="flex justify-between items-center mb-4">
             <h3
               id={`experience-entry-${index}`}
               className="text-lg font-semibold"
@@ -27,8 +44,11 @@ const Experience = ({
               Experience {index + 1}
             </h3>
             <button
-              onClick={() => removeEntry(index)}
-              className="text-red-500 hover:text-red-700 transition focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1 rounded"
+              onClick={(e) => {
+                stopPropagation(e);
+                removeEntry(index);
+              }}
+              className="text-red-500 hover:text-red-700 transition focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1 rounded-full p-1"
               disabled={experienceList.length <= 1}
               title={
                 experienceList.length <= 1
@@ -68,7 +88,10 @@ const Experience = ({
                 id={`company-${index}`}
                 name="company"
                 value={experience.company}
-                onChange={(e) => handleChange(e, index)}
+                onChange={(e) => handleExperienceInput(e, index)}
+                onMouseDown={stopPropagation}
+                onTouchStart={stopPropagation}
+                onKeyDown={stopPropagation}
                 placeholder="Company Name"
                 className={`border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                   errors[index]?.company ? 'border-red-500' : ''
@@ -103,7 +126,10 @@ const Experience = ({
                 id={`title-${index}`}
                 name="title"
                 value={experience.title}
-                onChange={(e) => handleChange(e, index)}
+                onChange={(e) => handleExperienceInput(e, index)}
+                onMouseDown={stopPropagation}
+                onTouchStart={stopPropagation}
+                onKeyDown={stopPropagation}
                 placeholder="Job Title"
                 className={`border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                   errors[index]?.title ? 'border-red-500' : ''
@@ -131,20 +157,24 @@ const Experience = ({
               <label
                 htmlFor={`startDate-${index}`}
                 className="block mb-1 font-medium"
-                id={`startDate-label-${index}`}
+                id={`exp-startDate-label-${index}`}
               >
-                Start Date
+                Start Date (DD.MM.YYYY)
               </label>
               <input
-                type="date"
+                type="text"
                 id={`startDate-${index}`}
                 name="startDate"
                 value={experience.startDate}
-                onChange={(e) => handleChange(e, index)}
+                onChange={(e) => handleExperienceInput(e, index)}
+                onMouseDown={stopPropagation}
+                onTouchStart={stopPropagation}
+                onKeyDown={stopPropagation}
+                placeholder="DD.MM.YYYY"
                 className={`border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                   errors[index]?.startDate ? 'border-red-500' : ''
                 }`}
-                aria-labelledby={`startDate-label-${index}`}
+                aria-labelledby={`exp-startDate-label-${index}`}
                 aria-invalid={errors[index]?.startDate ? 'true' : 'false'}
                 aria-describedby={
                   errors[index]?.startDate
@@ -167,23 +197,24 @@ const Experience = ({
               <label
                 htmlFor={`endDate-${index}`}
                 className="block mb-1 font-medium"
-                id={`endDate-label-${index}`}
+                id={`exp-endDate-label-${index}`}
               >
-                End Date{' '}
-                <span className="text-sm font-normal">
-                  (or leave blank for "Present")
-                </span>
+                End Date (DD.MM.YYYY or &quot;Present&quot;)
               </label>
               <input
-                type="date"
+                type="text"
                 id={`endDate-${index}`}
                 name="endDate"
                 value={experience.endDate}
-                onChange={(e) => handleChange(e, index)}
+                onChange={(e) => handleExperienceInput(e, index)}
+                onMouseDown={stopPropagation}
+                onTouchStart={stopPropagation}
+                onKeyDown={stopPropagation}
+                placeholder="DD.MM.YYYY or Present"
                 className={`border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                   errors[index]?.endDate ? 'border-red-500' : ''
                 }`}
-                aria-labelledby={`endDate-label-${index}`}
+                aria-labelledby={`exp-endDate-label-${index}`}
                 aria-invalid={errors[index]?.endDate ? 'true' : 'false'}
                 aria-describedby={
                   errors[index]?.endDate ? `endDate-error-${index}` : undefined
@@ -215,8 +246,11 @@ const Experience = ({
             <textarea
               id={`description-${index}`}
               name="description"
-              value={experience.description}
-              onChange={(e) => handleChange(e, index)}
+              value={experience.description || ''}
+              onChange={(e) => handleExperienceInput(e, index)}
+              onMouseDown={stopPropagation}
+              onTouchStart={stopPropagation}
+              onKeyDown={stopPropagation}
               rows="4"
               placeholder="Describe your responsibilities and achievements"
               className={`border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 ${
@@ -244,7 +278,10 @@ const Experience = ({
       ))}
 
       <button
-        onClick={addEntry}
+        onClick={(e) => {
+          stopPropagation(e);
+          addEntry();
+        }}
         className="mt-4 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-700 focus:ring-offset-2"
         aria-label="Add another experience entry"
       >

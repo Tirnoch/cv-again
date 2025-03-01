@@ -29,16 +29,22 @@ export const usePhoneValidation = () => {
  */
 export const useRequiredValidation = () => {
   return useCallback((value) => {
-    return value.trim() !== '';
+    return value && value.trim() !== '';
   }, []);
 };
 
 /**
  * Custom hook for date validation
- * @returns {Function} A function to validate dates in DD.MM.YYYY format
+ * @returns {Function} A function to validate dates in DD.MM.YYYY format or 'Present'
  */
 export const useDateValidation = () => {
   return useCallback((date) => {
+    // Empty date is valid (will be handled by required field validation if needed)
+    if (!date || date.trim() === '') return true;
+
+    // Accept 'Present' or 'present' as valid
+    if (date.trim().toLowerCase() === 'present') return true;
+
     // Simple date validation for format DD.MM.YYYY or similar patterns
     const dateRegex = /^(\d{1,2})[.\-/](\d{1,2})[.\-/](\d{2,4})$/;
     return dateRegex.test(date);

@@ -7,8 +7,25 @@ const Education = ({
   removeEntry,
   errors,
 }) => {
+  // Event handler to stop propagation
+  const stopPropagation = (e) => {
+    e.stopPropagation();
+  };
+
+  // Custom handler to ensure proper propagation control and event handling
+  const handleEducationInput = (e, index) => {
+    stopPropagation(e);
+    handleChange(e, index);
+  };
+
   return (
-    <div role="region" aria-labelledby="education-heading">
+    <div
+      role="region"
+      aria-labelledby="education-heading"
+      onClick={stopPropagation}
+      onMouseDown={stopPropagation}
+      onTouchStart={stopPropagation}
+    >
       <h3 id="education-heading" className="sr-only">
         Education History
       </h3>
@@ -27,7 +44,10 @@ const Education = ({
               Education {index + 1}
             </h3>
             <button
-              onClick={() => removeEntry(index)}
+              onClick={(e) => {
+                stopPropagation(e);
+                removeEntry(index);
+              }}
               className="text-red-500 hover:text-red-700 transition focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1 rounded"
               disabled={educationList.length <= 1}
               title={
@@ -68,7 +88,10 @@ const Education = ({
                 id={`school-${index}`}
                 name="school"
                 value={education.school}
-                onChange={(e) => handleChange(e, index)}
+                onChange={(e) => handleEducationInput(e, index)}
+                onMouseDown={stopPropagation}
+                onTouchStart={stopPropagation}
+                onKeyDown={stopPropagation}
                 placeholder="University or School Name"
                 className={`border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                   errors[index]?.school ? 'border-red-500' : ''
@@ -103,7 +126,10 @@ const Education = ({
                 id={`degree-${index}`}
                 name="degree"
                 value={education.degree}
-                onChange={(e) => handleChange(e, index)}
+                onChange={(e) => handleEducationInput(e, index)}
+                onMouseDown={stopPropagation}
+                onTouchStart={stopPropagation}
+                onKeyDown={stopPropagation}
                 placeholder="Degree and Field of Study"
                 className={`border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                   errors[index]?.degree ? 'border-red-500' : ''
@@ -133,14 +159,18 @@ const Education = ({
                 className="block mb-1 font-medium"
                 id={`edu-startDate-label-${index}`}
               >
-                Start Date
+                Start Date (DD.MM.YYYY)
               </label>
               <input
-                type="date"
+                type="text"
                 id={`startDate-${index}`}
                 name="startDate"
                 value={education.startDate}
-                onChange={(e) => handleChange(e, index)}
+                onChange={(e) => handleEducationInput(e, index)}
+                onMouseDown={stopPropagation}
+                onTouchStart={stopPropagation}
+                onKeyDown={stopPropagation}
+                placeholder="DD.MM.YYYY"
                 className={`border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                   errors[index]?.startDate ? 'border-red-500' : ''
                 }`}
@@ -148,14 +178,14 @@ const Education = ({
                 aria-invalid={errors[index]?.startDate ? 'true' : 'false'}
                 aria-describedby={
                   errors[index]?.startDate
-                    ? `edu-startDate-error-${index}`
+                    ? `startDate-error-${index}`
                     : undefined
                 }
               />
               {errors[index]?.startDate && (
                 <p
                   className="text-red-500 text-xs italic mt-1"
-                  id={`edu-startDate-error-${index}`}
+                  id={`startDate-error-${index}`}
                   aria-live="polite"
                 >
                   {errors[index].startDate}
@@ -169,32 +199,31 @@ const Education = ({
                 className="block mb-1 font-medium"
                 id={`edu-endDate-label-${index}`}
               >
-                End Date{' '}
-                <span className="text-sm font-normal">
-                  (or leave blank for &quot;Present&quot;)
-                </span>
+                End Date (DD.MM.YYYY)
               </label>
               <input
-                type="date"
+                type="text"
                 id={`endDate-${index}`}
                 name="endDate"
                 value={education.endDate}
-                onChange={(e) => handleChange(e, index)}
+                onChange={(e) => handleEducationInput(e, index)}
+                onMouseDown={stopPropagation}
+                onTouchStart={stopPropagation}
+                onKeyDown={stopPropagation}
+                placeholder="DD.MM.YYYY or Present"
                 className={`border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                   errors[index]?.endDate ? 'border-red-500' : ''
                 }`}
                 aria-labelledby={`edu-endDate-label-${index}`}
                 aria-invalid={errors[index]?.endDate ? 'true' : 'false'}
                 aria-describedby={
-                  errors[index]?.endDate
-                    ? `edu-endDate-error-${index}`
-                    : undefined
+                  errors[index]?.endDate ? `endDate-error-${index}` : undefined
                 }
               />
               {errors[index]?.endDate && (
                 <p
                   className="text-red-500 text-xs italic mt-1"
-                  id={`edu-endDate-error-${index}`}
+                  id={`endDate-error-${index}`}
                   aria-live="polite"
                 >
                   {errors[index].endDate}
@@ -206,7 +235,10 @@ const Education = ({
       ))}
 
       <button
-        onClick={addEntry}
+        onClick={(e) => {
+          stopPropagation(e);
+          addEntry();
+        }}
         className="mt-4 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-700 focus:ring-offset-2"
         aria-label="Add another education entry"
       >

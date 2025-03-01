@@ -70,6 +70,7 @@ export const ACTIONS = {
   REMOVE_PROJECT: 'remove_project',
   UPDATE_LANGUAGES: 'update_languages',
   UPDATE_SECTION_ORDER: 'update_section_order',
+  REORDER_SECTIONS: 'reorder_sections',
   TOGGLE_SECTION_VISIBILITY: 'toggle_section_visibility',
   TOGGLE_SECTION_COLLAPSE: 'toggle_section_collapse',
   RESET_ALL: 'reset_all',
@@ -206,6 +207,16 @@ function cvReducer(state, action) {
       return {
         ...state,
         sectionOrder: action.sectionOrder,
+      };
+
+    case ACTIONS.REORDER_SECTIONS:
+      const items = Array.from(state.sectionOrder);
+      const [reorderedItem] = items.splice(action.sourceIndex, 1);
+      items.splice(action.destinationIndex, 0, reorderedItem);
+
+      return {
+        ...state,
+        sectionOrder: items,
       };
 
     case ACTIONS.TOGGLE_SECTION_VISIBILITY:

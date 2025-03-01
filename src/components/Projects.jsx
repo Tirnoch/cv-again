@@ -1,11 +1,41 @@
 import PropTypes from 'prop-types';
 
 const Projects = ({ projects, handleChange, addEntry, removeEntry }) => {
+  // Event handler to stop propagation
+  const stopPropagation = (e) => {
+    e.stopPropagation();
+  };
+
+  // Create a wrapper function for the handleChange to ensure proper name and event handling
+  const handleProjectChange = (e, index) => {
+    // Stop propagation first to prevent drag and drop interference
+    stopPropagation(e);
+
+    // Extract the field name from the name attribute (not the id)
+    const { name, value } = e.target;
+
+    // Call the parent's handleChange with the correct field name
+    const eventWithName = {
+      target: {
+        id: name, // This is critical - use the name as id to match App.jsx expectations
+        value,
+      },
+    };
+
+    handleChange(eventWithName, index);
+  };
+
   return (
-    <div role="region" aria-labelledby="projects-heading">
-      <h3 id="projects-heading" className="sr-only">
+    <div
+      role="region"
+      aria-labelledby="projects-heading"
+      onClick={stopPropagation}
+      onMouseDown={stopPropagation}
+      onTouchStart={stopPropagation}
+    >
+      <h2 id="projects-heading" className="sr-only">
         Projects
-      </h3>
+      </h2>
       {projects.map((project, index) => (
         <div
           key={project.id}
@@ -13,21 +43,18 @@ const Projects = ({ projects, handleChange, addEntry, removeEntry }) => {
           role="group"
           aria-labelledby={`project-entry-${index}`}
         >
-          <div className="flex justify-between items-center mb-2">
+          <div className="flex justify-between items-center mb-3">
             <h3 id={`project-entry-${index}`} className="text-lg font-semibold">
               Project {index + 1}
             </h3>
             <button
-              onClick={() => removeEntry(index)}
+              onClick={(e) => {
+                stopPropagation(e);
+                removeEntry(index);
+              }}
               className="text-red-500 hover:text-red-700 transition focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1 rounded"
-              disabled={projects.length <= 1}
-              title={
-                projects.length <= 1
-                  ? 'Cannot remove the only project'
-                  : 'Remove this project'
-              }
+              title="Remove this project"
               aria-label={`Remove project ${index + 1}`}
-              aria-disabled={projects.length <= 1}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -45,119 +72,105 @@ const Projects = ({ projects, handleChange, addEntry, removeEntry }) => {
             </button>
           </div>
 
-          <div className="grid gap-4 md:grid-cols-2">
-            <div>
-              <label
-                htmlFor={`projectTitle-${index}`}
-                className="block mb-1 font-medium"
-                id={`projectTitle-label-${index}`}
-              >
-                Project Title
-              </label>
-              <input
-                type="text"
-                id={`projectTitle-${index}`}
-                name="title"
-                value={project.title}
-                onChange={(e) => handleChange(e, index)}
-                placeholder="Project Name"
-                className="border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-                aria-labelledby={`projectTitle-label-${index}`}
-              />
-            </div>
-
-            <div>
-              <label
-                htmlFor={`projectLink-${index}`}
-                className="block mb-1 font-medium"
-                id={`projectLink-label-${index}`}
-              >
-                Project Link{' '}
-                <span className="text-sm font-normal">(optional)</span>
-              </label>
-              <input
-                type="url"
-                id={`projectLink-${index}`}
-                name="link"
-                value={project.link}
-                onChange={(e) => handleChange(e, index)}
-                placeholder="https://example.com"
-                className="border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-                aria-labelledby={`projectLink-label-${index}`}
-              />
-            </div>
-          </div>
-
-          <div className="grid gap-4 md:grid-cols-2 mt-4">
-            <div>
-              <label
-                htmlFor={`projectStartDate-${index}`}
-                className="block mb-1 font-medium"
-                id={`projectStartDate-label-${index}`}
-              >
-                Start Date
-              </label>
-              <input
-                type="date"
-                id={`projectStartDate-${index}`}
-                name="startDate"
-                value={project.startDate}
-                onChange={(e) => handleChange(e, index)}
-                className="border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-                aria-labelledby={`projectStartDate-label-${index}`}
-              />
-            </div>
-
-            <div>
-              <label
-                htmlFor={`projectEndDate-${index}`}
-                className="block mb-1 font-medium"
-                id={`projectEndDate-label-${index}`}
-              >
-                End Date{' '}
-                <span className="text-sm font-normal">
-                  (or leave blank for ongoing)
-                </span>
-              </label>
-              <input
-                type="date"
-                id={`projectEndDate-${index}`}
-                name="endDate"
-                value={project.endDate}
-                onChange={(e) => handleChange(e, index)}
-                className="border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-                aria-labelledby={`projectEndDate-label-${index}`}
-              />
-            </div>
-          </div>
-
-          <div className="mt-4">
+          <div className="mb-3">
             <label
-              htmlFor={`projectDescription-${index}`}
+              htmlFor={`title-${index}`}
               className="block mb-1 font-medium"
-              id={`projectDescription-label-${index}`}
+              id={`title-label-${index}`}
             >
-              Description{' '}
-              <span className="text-sm font-normal">
-                (use bullet points with * at start of line)
-              </span>
+              Project Title
+            </label>
+            <input
+              type="text"
+              id={`title-${index}`}
+              name="title"
+              value={project.title || ''}
+              onChange={(e) => handleProjectChange(e, index)}
+              onMouseDown={stopPropagation}
+              onTouchStart={stopPropagation}
+              onKeyDown={stopPropagation}
+              placeholder="Project Title"
+              className="border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+              aria-labelledby={`title-label-${index}`}
+            />
+          </div>
+
+          <div className="mb-3">
+            <label
+              htmlFor={`description-${index}`}
+              className="block mb-1 font-medium"
+              id={`description-label-${index}`}
+            >
+              Description
             </label>
             <textarea
-              id={`projectDescription-${index}`}
+              id={`description-${index}`}
               name="description"
-              value={project.description}
-              onChange={(e) => handleChange(e, index)}
-              rows="4"
-              placeholder="Describe your project, technologies used, and your role"
+              value={project.description || ''}
+              onChange={(e) => handleProjectChange(e, index)}
+              onMouseDown={stopPropagation}
+              onTouchStart={stopPropagation}
+              onKeyDown={stopPropagation}
+              placeholder="Project Description"
+              rows="3"
               className="border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-              aria-labelledby={`projectDescription-label-${index}`}
+              aria-labelledby={`description-label-${index}`}
             ></textarea>
+          </div>
+
+          <div className="mb-3">
+            <label
+              htmlFor={`technologies-${index}`}
+              className="block mb-1 font-medium"
+              id={`technologies-label-${index}`}
+            >
+              Technologies Used
+            </label>
+            <input
+              type="text"
+              id={`technologies-${index}`}
+              name="technologies"
+              value={project.technologies || ''}
+              onChange={(e) => handleProjectChange(e, index)}
+              onMouseDown={stopPropagation}
+              onTouchStart={stopPropagation}
+              onKeyDown={stopPropagation}
+              placeholder="Technologies (comma separated)"
+              className="border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+              aria-labelledby={`technologies-label-${index}`}
+            />
+          </div>
+
+          <div className="mb-3">
+            <label
+              htmlFor={`link-${index}`}
+              className="block mb-1 font-medium"
+              id={`link-label-${index}`}
+            >
+              Project Link (Optional)
+            </label>
+            <input
+              type="url"
+              id={`link-${index}`}
+              name="link"
+              value={project.link || ''}
+              onChange={(e) => handleProjectChange(e, index)}
+              onMouseDown={stopPropagation}
+              onTouchStart={stopPropagation}
+              onKeyDown={stopPropagation}
+              placeholder="https://..."
+              className="border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+              aria-labelledby={`link-label-${index}`}
+            />
           </div>
         </div>
       ))}
 
       <button
-        onClick={addEntry}
+        onClick={(e) => {
+          stopPropagation(e);
+          addEntry();
+        }}
         className="mt-4 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-700 focus:ring-offset-2"
         aria-label="Add another project"
       >
@@ -171,11 +184,10 @@ Projects.propTypes = {
   projects: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.string.isRequired,
-      title: PropTypes.string.isRequired,
-      link: PropTypes.string,
-      startDate: PropTypes.string,
-      endDate: PropTypes.string,
+      title: PropTypes.string,
       description: PropTypes.string,
+      technologies: PropTypes.string,
+      link: PropTypes.string,
     })
   ).isRequired,
   handleChange: PropTypes.func.isRequired,
