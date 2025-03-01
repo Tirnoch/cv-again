@@ -3,9 +3,9 @@ import { useState } from 'react';
 /**
  * Custom hook for managing form errors
  * @param {Object} initialErrors - Initial error state
- * @returns {Array} [errors, setErrors, updateFieldError, removeFieldError, validateField]
+ * @returns {Object} Object containing errors state and utility functions
  */
-const useFormErrors = (initialErrors = {}) => {
+export const useFormErrors = (initialErrors = {}) => {
   const [errors, setErrors] = useState(initialErrors);
 
   /**
@@ -37,21 +37,36 @@ const useFormErrors = (initialErrors = {}) => {
   };
 
   /**
-   * Remove an error for a specific field
+   * Remove an error for a specific field or all errors for a section/index
    * @param {string} section - The section of the form
-   * @param {string} field - The field name
+   * @param {string|number} fieldOrIndex - The field name or index
    * @param {number} index - Optional index for array fields
    */
-  const removeFieldError = (section, field, index = null) => {
+  const removeFieldError = (section, fieldOrIndex = null, index = null) => {
     setErrors((prevErrors) => {
       const newErrors = { ...prevErrors };
 
+      // If fieldOrIndex is a number, treat it as an index and remove all errors for that index
+      if (typeof fieldOrIndex === 'number') {
+        if (newErrors[section]) {
+          delete newErrors[section][fieldOrIndex];
+        }
+        return newErrors;
+      }
+
+      // If fieldOrIndex is null, remove all errors for the section
+      if (fieldOrIndex === null) {
+        delete newErrors[section];
+        return newErrors;
+      }
+
+      // Otherwise, treat fieldOrIndex as a field name
       if (index !== null) {
         if (newErrors[section] && newErrors[section][index]) {
-          delete newErrors[section][index][field];
+          delete newErrors[section][index][fieldOrIndex];
         }
       } else if (newErrors[section]) {
-        delete newErrors[section][field];
+        delete newErrors[section][fieldOrIndex];
       }
 
       return newErrors;
@@ -87,7 +102,13 @@ const useFormErrors = (initialErrors = {}) => {
     return isValid;
   };
 
-  return [errors, setErrors, updateFieldError, removeFieldError, validateField];
+  return {
+    errors,
+    setErrors,
+    updateFieldError,
+    removeFieldError,
+    validateField,
+  };
 };
 
 export default useFormErrors;

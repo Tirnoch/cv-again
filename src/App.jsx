@@ -550,6 +550,7 @@ const App = () => {
     personal.location,
     educationList,
     experienceList,
+    validateField,
   ]);
 
   // Combined CV data for template selector
