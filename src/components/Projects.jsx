@@ -2,26 +2,39 @@ import PropTypes from 'prop-types';
 
 const Projects = ({ projects, handleChange, addEntry, removeEntry }) => {
   return (
-    <div>
+    <div role="region" aria-labelledby="projects-heading">
+      <h3 id="projects-heading" className="sr-only">
+        Projects
+      </h3>
       {projects.map((project, index) => (
-        <div key={project.id} className="mb-4 pb-4 border-b last:border-b-0">
+        <div
+          key={project.id}
+          className="mb-4 pb-4 border-b last:border-b-0"
+          role="group"
+          aria-labelledby={`project-entry-${index}`}
+        >
           <div className="flex justify-between items-center mb-2">
-            <h3 className="text-lg font-semibold">Project {index + 1}</h3>
+            <h3 id={`project-entry-${index}`} className="text-lg font-semibold">
+              Project {index + 1}
+            </h3>
             <button
               onClick={() => removeEntry(index)}
-              className="text-red-500 hover:text-red-700 transition"
+              className="text-red-500 hover:text-red-700 transition focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1 rounded"
               disabled={projects.length <= 1}
               title={
                 projects.length <= 1
                   ? 'Cannot remove the only project'
                   : 'Remove this project'
               }
+              aria-label={`Remove project ${index + 1}`}
+              aria-disabled={projects.length <= 1}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-5 w-5"
                 viewBox="0 0 20 20"
                 fill="currentColor"
+                aria-hidden="true"
               >
                 <path
                   fillRule="evenodd"
@@ -35,110 +48,119 @@ const Projects = ({ projects, handleChange, addEntry, removeEntry }) => {
           <div className="grid gap-4 md:grid-cols-2">
             <div>
               <label
-                htmlFor={`title-${index}`}
+                htmlFor={`projectTitle-${index}`}
                 className="block mb-1 font-medium"
+                id={`projectTitle-label-${index}`}
               >
                 Project Title
               </label>
               <input
                 type="text"
-                id="title"
+                id={`projectTitle-${index}`}
+                name="title"
                 value={project.title}
                 onChange={(e) => handleChange(e, index)}
-                placeholder="Project Title"
-                className="border rounded p-2 w-full"
+                placeholder="Project Name"
+                className="border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                aria-labelledby={`projectTitle-label-${index}`}
               />
             </div>
 
             <div>
               <label
-                htmlFor={`link-${index}`}
+                htmlFor={`projectLink-${index}`}
                 className="block mb-1 font-medium"
+                id={`projectLink-label-${index}`}
               >
-                Project Link
+                Project Link{' '}
+                <span className="text-sm font-normal">(optional)</span>
               </label>
               <input
-                type="text"
-                id="link"
+                type="url"
+                id={`projectLink-${index}`}
+                name="link"
                 value={project.link}
                 onChange={(e) => handleChange(e, index)}
-                placeholder="https://..."
-                className="border rounded p-2 w-full"
+                placeholder="https://example.com"
+                className="border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                aria-labelledby={`projectLink-label-${index}`}
               />
             </div>
           </div>
 
-          <div className="mt-4 grid gap-4 md:grid-cols-2">
+          <div className="grid gap-4 md:grid-cols-2 mt-4">
             <div>
               <label
-                htmlFor={`startDate-${index}`}
+                htmlFor={`projectStartDate-${index}`}
                 className="block mb-1 font-medium"
+                id={`projectStartDate-label-${index}`}
               >
                 Start Date
               </label>
               <input
-                type="text"
-                id="startDate"
+                type="date"
+                id={`projectStartDate-${index}`}
+                name="startDate"
                 value={project.startDate}
                 onChange={(e) => handleChange(e, index)}
-                placeholder="DD.MM.YYYY"
-                className="border rounded p-2 w-full"
+                className="border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                aria-labelledby={`projectStartDate-label-${index}`}
               />
             </div>
 
             <div>
               <label
-                htmlFor={`endDate-${index}`}
+                htmlFor={`projectEndDate-${index}`}
                 className="block mb-1 font-medium"
+                id={`projectEndDate-label-${index}`}
               >
-                End Date
+                End Date{' '}
+                <span className="text-sm font-normal">
+                  (or leave blank for ongoing)
+                </span>
               </label>
               <input
-                type="text"
-                id="endDate"
+                type="date"
+                id={`projectEndDate-${index}`}
+                name="endDate"
                 value={project.endDate}
                 onChange={(e) => handleChange(e, index)}
-                placeholder="DD.MM.YYYY (or 'Present')"
-                className="border rounded p-2 w-full"
+                className="border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                aria-labelledby={`projectEndDate-label-${index}`}
               />
             </div>
           </div>
 
           <div className="mt-4">
             <label
-              htmlFor={`description-${index}`}
+              htmlFor={`projectDescription-${index}`}
               className="block mb-1 font-medium"
+              id={`projectDescription-label-${index}`}
             >
-              Description
+              Description{' '}
+              <span className="text-sm font-normal">
+                (use bullet points with * at start of line)
+              </span>
             </label>
             <textarea
-              id="description"
+              id={`projectDescription-${index}`}
+              name="description"
               value={project.description}
               onChange={(e) => handleChange(e, index)}
+              rows="4"
               placeholder="Describe your project, technologies used, and your role"
-              className="border rounded p-2 w-full h-24"
-            />
+              className="border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+              aria-labelledby={`projectDescription-label-${index}`}
+            ></textarea>
           </div>
         </div>
       ))}
 
       <button
-        type="button"
         onClick={addEntry}
-        className="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition flex items-center"
+        className="mt-4 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-700 focus:ring-offset-2"
+        aria-label="Add another project"
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-5 w-5 mr-1"
-          viewBox="0 0 20 20"
-          fill="currentColor"
-        >
-          <path
-            fillRule="evenodd"
-            d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
-            clipRule="evenodd"
-          />
-        </svg>
         Add Another Project
       </button>
     </div>
@@ -150,10 +172,10 @@ Projects.propTypes = {
     PropTypes.shape({
       id: PropTypes.string.isRequired,
       title: PropTypes.string.isRequired,
-      description: PropTypes.string.isRequired,
-      startDate: PropTypes.string.isRequired,
-      endDate: PropTypes.string.isRequired,
-      link: PropTypes.string.isRequired,
+      link: PropTypes.string,
+      startDate: PropTypes.string,
+      endDate: PropTypes.string,
+      description: PropTypes.string,
     })
   ).isRequired,
   handleChange: PropTypes.func.isRequired,

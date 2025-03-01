@@ -8,26 +8,42 @@ const Experience = ({
   errors,
 }) => {
   return (
-    <div>
+    <div role="region" aria-labelledby="experience-heading">
+      <h3 id="experience-heading" className="sr-only">
+        Work Experience
+      </h3>
       {experienceList.map((experience, index) => (
-        <div key={experience.id} className="mb-4 pb-4 border-b last:border-b-0">
+        <div
+          key={experience.id}
+          className="mb-4 pb-4 border-b last:border-b-0"
+          role="group"
+          aria-labelledby={`experience-entry-${index}`}
+        >
           <div className="flex justify-between items-center mb-2">
-            <h3 className="text-lg font-semibold">Experience {index + 1}</h3>
+            <h3
+              id={`experience-entry-${index}`}
+              className="text-lg font-semibold"
+            >
+              Experience {index + 1}
+            </h3>
             <button
               onClick={() => removeEntry(index)}
-              className="text-red-500 hover:text-red-700 transition"
+              className="text-red-500 hover:text-red-700 transition focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1 rounded"
               disabled={experienceList.length <= 1}
               title={
                 experienceList.length <= 1
                   ? 'Cannot remove the only experience entry'
                   : 'Remove this experience entry'
               }
+              aria-label={`Remove experience ${index + 1}`}
+              aria-disabled={experienceList.length <= 1}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-5 w-5"
                 viewBox="0 0 20 20"
                 fill="currentColor"
+                aria-hidden="true"
               >
                 <path
                   fillRule="evenodd"
@@ -43,21 +59,32 @@ const Experience = ({
               <label
                 htmlFor={`company-${index}`}
                 className="block mb-1 font-medium"
+                id={`company-label-${index}`}
               >
                 Company
               </label>
               <input
                 type="text"
-                id="company"
+                id={`company-${index}`}
+                name="company"
                 value={experience.company}
                 onChange={(e) => handleChange(e, index)}
                 placeholder="Company Name"
-                className={`border rounded p-2 w-full ${
+                className={`border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                   errors[index]?.company ? 'border-red-500' : ''
                 }`}
+                aria-labelledby={`company-label-${index}`}
+                aria-invalid={errors[index]?.company ? 'true' : 'false'}
+                aria-describedby={
+                  errors[index]?.company ? `company-error-${index}` : undefined
+                }
               />
               {errors[index]?.company && (
-                <p className="text-red-500 text-xs italic mt-1">
+                <p
+                  className="text-red-500 text-xs italic mt-1"
+                  id={`company-error-${index}`}
+                  aria-live="polite"
+                >
                   {errors[index].company}
                 </p>
               )}
@@ -67,47 +94,70 @@ const Experience = ({
               <label
                 htmlFor={`title-${index}`}
                 className="block mb-1 font-medium"
+                id={`title-label-${index}`}
               >
                 Job Title
               </label>
               <input
                 type="text"
-                id="title"
+                id={`title-${index}`}
+                name="title"
                 value={experience.title}
                 onChange={(e) => handleChange(e, index)}
                 placeholder="Job Title"
-                className={`border rounded p-2 w-full ${
+                className={`border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                   errors[index]?.title ? 'border-red-500' : ''
                 }`}
+                aria-labelledby={`title-label-${index}`}
+                aria-invalid={errors[index]?.title ? 'true' : 'false'}
+                aria-describedby={
+                  errors[index]?.title ? `title-error-${index}` : undefined
+                }
               />
               {errors[index]?.title && (
-                <p className="text-red-500 text-xs italic mt-1">
+                <p
+                  className="text-red-500 text-xs italic mt-1"
+                  id={`title-error-${index}`}
+                  aria-live="polite"
+                >
                   {errors[index].title}
                 </p>
               )}
             </div>
           </div>
 
-          <div className="mt-4 grid gap-4 md:grid-cols-2">
+          <div className="grid gap-4 md:grid-cols-2 mt-4">
             <div>
               <label
                 htmlFor={`startDate-${index}`}
                 className="block mb-1 font-medium"
+                id={`startDate-label-${index}`}
               >
                 Start Date
               </label>
               <input
-                type="text"
-                id="startDate"
+                type="date"
+                id={`startDate-${index}`}
+                name="startDate"
                 value={experience.startDate}
                 onChange={(e) => handleChange(e, index)}
-                placeholder="DD.MM.YYYY"
-                className={`border rounded p-2 w-full ${
+                className={`border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                   errors[index]?.startDate ? 'border-red-500' : ''
                 }`}
+                aria-labelledby={`startDate-label-${index}`}
+                aria-invalid={errors[index]?.startDate ? 'true' : 'false'}
+                aria-describedby={
+                  errors[index]?.startDate
+                    ? `startDate-error-${index}`
+                    : undefined
+                }
               />
               {errors[index]?.startDate && (
-                <p className="text-red-500 text-xs italic mt-1">
+                <p
+                  className="text-red-500 text-xs italic mt-1"
+                  id={`startDate-error-${index}`}
+                  aria-live="polite"
+                >
                   {errors[index].startDate}
                 </p>
               )}
@@ -117,21 +167,34 @@ const Experience = ({
               <label
                 htmlFor={`endDate-${index}`}
                 className="block mb-1 font-medium"
+                id={`endDate-label-${index}`}
               >
-                End Date
+                End Date{' '}
+                <span className="text-sm font-normal">
+                  (or leave blank for "Present")
+                </span>
               </label>
               <input
-                type="text"
-                id="endDate"
+                type="date"
+                id={`endDate-${index}`}
+                name="endDate"
                 value={experience.endDate}
                 onChange={(e) => handleChange(e, index)}
-                placeholder="DD.MM.YYYY (or 'Present')"
-                className={`border rounded p-2 w-full ${
+                className={`border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                   errors[index]?.endDate ? 'border-red-500' : ''
                 }`}
+                aria-labelledby={`endDate-label-${index}`}
+                aria-invalid={errors[index]?.endDate ? 'true' : 'false'}
+                aria-describedby={
+                  errors[index]?.endDate ? `endDate-error-${index}` : undefined
+                }
               />
               {errors[index]?.endDate && (
-                <p className="text-red-500 text-xs italic mt-1">
+                <p
+                  className="text-red-500 text-xs italic mt-1"
+                  id={`endDate-error-${index}`}
+                  aria-live="polite"
+                >
                   {errors[index].endDate}
                 </p>
               )}
@@ -142,37 +205,49 @@ const Experience = ({
             <label
               htmlFor={`description-${index}`}
               className="block mb-1 font-medium"
+              id={`description-label-${index}`}
             >
-              Description
+              Description{' '}
+              <span className="text-sm font-normal">
+                (use bullet points with * at start of line)
+              </span>
             </label>
             <textarea
-              id="description"
+              id={`description-${index}`}
+              name="description"
               value={experience.description}
               onChange={(e) => handleChange(e, index)}
-              placeholder="Describe your role and responsibilities"
-              className="border rounded p-2 w-full h-24"
-            />
+              rows="4"
+              placeholder="Describe your responsibilities and achievements"
+              className={`border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                errors[index]?.description ? 'border-red-500' : ''
+              }`}
+              aria-labelledby={`description-label-${index}`}
+              aria-invalid={errors[index]?.description ? 'true' : 'false'}
+              aria-describedby={
+                errors[index]?.description
+                  ? `description-error-${index}`
+                  : undefined
+              }
+            ></textarea>
+            {errors[index]?.description && (
+              <p
+                className="text-red-500 text-xs italic mt-1"
+                id={`description-error-${index}`}
+                aria-live="polite"
+              >
+                {errors[index].description}
+              </p>
+            )}
           </div>
         </div>
       ))}
 
       <button
-        type="button"
         onClick={addEntry}
-        className="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition flex items-center"
+        className="mt-4 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-700 focus:ring-offset-2"
+        aria-label="Add another experience entry"
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-5 w-5 mr-1"
-          viewBox="0 0 20 20"
-          fill="currentColor"
-        >
-          <path
-            fillRule="evenodd"
-            d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
-            clipRule="evenodd"
-          />
-        </svg>
         Add Another Experience
       </button>
     </div>
@@ -186,8 +261,8 @@ Experience.propTypes = {
       company: PropTypes.string.isRequired,
       title: PropTypes.string.isRequired,
       startDate: PropTypes.string.isRequired,
-      endDate: PropTypes.string.isRequired,
-      description: PropTypes.string.isRequired,
+      endDate: PropTypes.string,
+      description: PropTypes.string,
     })
   ).isRequired,
   handleChange: PropTypes.func.isRequired,

@@ -643,16 +643,34 @@ const App = () => {
   // Render a section based on its ID
   const renderSection = (section, index) => {
     const isCollapsed = collapsedSections[section.id] || false;
+    const sectionId = `section-${section.id}`;
+    const headingId = `heading-${section.id}`;
 
     // Section header with collapse/expand and visibility toggle
     const sectionHeader = (
-      <div className="flex justify-between items-center bg-gray-100 p-2 rounded-t border-b">
-        <h2 className="text-lg font-semibold">{section.title}</h2>
-        <div className="flex gap-2">
+      <div
+        className="flex justify-between items-center bg-gray-100 p-2 rounded-t border-b"
+        role="region"
+        aria-labelledby={headingId}
+      >
+        <h2 id={headingId} className="text-lg font-semibold">
+          {section.title}
+        </h2>
+        <div
+          className="flex gap-2"
+          role="toolbar"
+          aria-label={`${section.title} controls`}
+        >
           <button
             onClick={() => toggleSectionVisibility(section.id)}
-            className="p-1 text-gray-500 hover:text-gray-700"
+            className="p-1 text-gray-500 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 rounded"
             title={section.visible ? 'Hide from CV' : 'Show in CV'}
+            aria-label={
+              section.visible
+                ? `Hide ${section.title} section from CV`
+                : `Show ${section.title} section in CV`
+            }
+            aria-pressed={section.visible}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -660,6 +678,7 @@ const App = () => {
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
+              aria-hidden="true"
             >
               {section.visible ? (
                 <path
@@ -680,8 +699,15 @@ const App = () => {
           </button>
           <button
             onClick={() => toggleSectionCollapse(section.id)}
-            className="p-1 text-gray-500 hover:text-gray-700"
+            className="p-1 text-gray-500 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 rounded"
             title={isCollapsed ? 'Expand section' : 'Collapse section'}
+            aria-label={
+              isCollapsed
+                ? `Expand ${section.title} section`
+                : `Collapse ${section.title} section`
+            }
+            aria-expanded={!isCollapsed}
+            aria-controls={`content-${section.id}`}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -689,6 +715,7 @@ const App = () => {
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
+              aria-hidden="true"
             >
               {isCollapsed ? (
                 <path
@@ -713,7 +740,11 @@ const App = () => {
 
     // Only render content if not collapsed
     const sectionContent = !isCollapsed && (
-      <div className="p-4">
+      <div
+        className="p-4"
+        id={`content-${section.id}`}
+        aria-labelledby={headingId}
+      >
         {section.id === 'personal' && (
           <Personal
             name={personal.name}
@@ -774,8 +805,16 @@ const App = () => {
             ref={provided.innerRef}
             {...provided.draggableProps}
             className="mb-4 bg-white rounded shadow border border-gray-200"
+            id={sectionId}
+            role="group"
+            aria-labelledby={headingId}
           >
-            <div {...provided.dragHandleProps} className="cursor-move">
+            <div
+              {...provided.dragHandleProps}
+              className="cursor-move"
+              aria-label={`Drag ${section.title} section to reorder`}
+              tabIndex={0}
+            >
               {sectionHeader}
             </div>
             {sectionContent}
@@ -796,10 +835,23 @@ const App = () => {
           />
           <div className="my-4"></div>
 
+          <h2 id="form-sections-heading" className="sr-only">
+            CV Form Sections
+          </h2>
           <DragDropContext onDragEnd={handleDragEnd}>
             <Droppable droppableId="sections">
               {(provided) => (
-                <div {...provided.droppableProps} ref={provided.innerRef}>
+                <div
+                  {...provided.droppableProps}
+                  ref={provided.innerRef}
+                  role="region"
+                  aria-labelledby="form-sections-heading"
+                  aria-describedby="drag-drop-instructions"
+                >
+                  <p id="drag-drop-instructions" className="sr-only">
+                    Drag and drop sections to reorder them. Use tab to navigate
+                    between sections and space to select a section for dragging.
+                  </p>
                   {sectionOrder.map((section, index) =>
                     renderSection(section, index)
                   )}

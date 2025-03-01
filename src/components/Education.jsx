@@ -8,26 +8,42 @@ const Education = ({
   errors,
 }) => {
   return (
-    <div>
+    <div role="region" aria-labelledby="education-heading">
+      <h3 id="education-heading" className="sr-only">
+        Education History
+      </h3>
       {educationList.map((education, index) => (
-        <div key={education.id} className="mb-4 pb-4 border-b last:border-b-0">
+        <div
+          key={education.id}
+          className="mb-4 pb-4 border-b last:border-b-0"
+          role="group"
+          aria-labelledby={`education-entry-${index}`}
+        >
           <div className="flex justify-between items-center mb-2">
-            <h3 className="text-lg font-semibold">Education {index + 1}</h3>
+            <h3
+              id={`education-entry-${index}`}
+              className="text-lg font-semibold"
+            >
+              Education {index + 1}
+            </h3>
             <button
               onClick={() => removeEntry(index)}
-              className="text-red-500 hover:text-red-700 transition"
+              className="text-red-500 hover:text-red-700 transition focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1 rounded"
               disabled={educationList.length <= 1}
               title={
                 educationList.length <= 1
                   ? 'Cannot remove the only education entry'
                   : 'Remove this education entry'
               }
+              aria-label={`Remove education ${index + 1}`}
+              aria-disabled={educationList.length <= 1}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-5 w-5"
                 viewBox="0 0 20 20"
                 fill="currentColor"
+                aria-hidden="true"
               >
                 <path
                   fillRule="evenodd"
@@ -43,21 +59,32 @@ const Education = ({
               <label
                 htmlFor={`school-${index}`}
                 className="block mb-1 font-medium"
+                id={`school-label-${index}`}
               >
                 School
               </label>
               <input
                 type="text"
-                id="school"
+                id={`school-${index}`}
+                name="school"
                 value={education.school}
                 onChange={(e) => handleChange(e, index)}
-                placeholder="School Name"
-                className={`border rounded p-2 w-full ${
+                placeholder="University or School Name"
+                className={`border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                   errors[index]?.school ? 'border-red-500' : ''
                 }`}
+                aria-labelledby={`school-label-${index}`}
+                aria-invalid={errors[index]?.school ? 'true' : 'false'}
+                aria-describedby={
+                  errors[index]?.school ? `school-error-${index}` : undefined
+                }
               />
               {errors[index]?.school && (
-                <p className="text-red-500 text-xs italic mt-1">
+                <p
+                  className="text-red-500 text-xs italic mt-1"
+                  id={`school-error-${index}`}
+                  aria-live="polite"
+                >
                   {errors[index].school}
                 </p>
               )}
@@ -67,47 +94,70 @@ const Education = ({
               <label
                 htmlFor={`degree-${index}`}
                 className="block mb-1 font-medium"
+                id={`degree-label-${index}`}
               >
-                Degree
+                Degree / Field of Study
               </label>
               <input
                 type="text"
-                id="degree"
+                id={`degree-${index}`}
+                name="degree"
                 value={education.degree}
                 onChange={(e) => handleChange(e, index)}
-                placeholder="Degree / Field of Study"
-                className={`border rounded p-2 w-full ${
+                placeholder="Degree and Field of Study"
+                className={`border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                   errors[index]?.degree ? 'border-red-500' : ''
                 }`}
+                aria-labelledby={`degree-label-${index}`}
+                aria-invalid={errors[index]?.degree ? 'true' : 'false'}
+                aria-describedby={
+                  errors[index]?.degree ? `degree-error-${index}` : undefined
+                }
               />
               {errors[index]?.degree && (
-                <p className="text-red-500 text-xs italic mt-1">
+                <p
+                  className="text-red-500 text-xs italic mt-1"
+                  id={`degree-error-${index}`}
+                  aria-live="polite"
+                >
                   {errors[index].degree}
                 </p>
               )}
             </div>
           </div>
 
-          <div className="mt-4 grid gap-4 md:grid-cols-2">
+          <div className="grid gap-4 md:grid-cols-2 mt-4">
             <div>
               <label
                 htmlFor={`startDate-${index}`}
                 className="block mb-1 font-medium"
+                id={`edu-startDate-label-${index}`}
               >
                 Start Date
               </label>
               <input
-                type="text"
-                id="startDate"
+                type="date"
+                id={`startDate-${index}`}
+                name="startDate"
                 value={education.startDate}
                 onChange={(e) => handleChange(e, index)}
-                placeholder="DD.MM.YYYY"
-                className={`border rounded p-2 w-full ${
+                className={`border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                   errors[index]?.startDate ? 'border-red-500' : ''
                 }`}
+                aria-labelledby={`edu-startDate-label-${index}`}
+                aria-invalid={errors[index]?.startDate ? 'true' : 'false'}
+                aria-describedby={
+                  errors[index]?.startDate
+                    ? `edu-startDate-error-${index}`
+                    : undefined
+                }
               />
               {errors[index]?.startDate && (
-                <p className="text-red-500 text-xs italic mt-1">
+                <p
+                  className="text-red-500 text-xs italic mt-1"
+                  id={`edu-startDate-error-${index}`}
+                  aria-live="polite"
+                >
                   {errors[index].startDate}
                 </p>
               )}
@@ -117,21 +167,36 @@ const Education = ({
               <label
                 htmlFor={`endDate-${index}`}
                 className="block mb-1 font-medium"
+                id={`edu-endDate-label-${index}`}
               >
-                End Date
+                End Date{' '}
+                <span className="text-sm font-normal">
+                  (or leave blank for "Present")
+                </span>
               </label>
               <input
-                type="text"
-                id="endDate"
+                type="date"
+                id={`endDate-${index}`}
+                name="endDate"
                 value={education.endDate}
                 onChange={(e) => handleChange(e, index)}
-                placeholder="DD.MM.YYYY (or 'Present')"
-                className={`border rounded p-2 w-full ${
+                className={`border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                   errors[index]?.endDate ? 'border-red-500' : ''
                 }`}
+                aria-labelledby={`edu-endDate-label-${index}`}
+                aria-invalid={errors[index]?.endDate ? 'true' : 'false'}
+                aria-describedby={
+                  errors[index]?.endDate
+                    ? `edu-endDate-error-${index}`
+                    : undefined
+                }
               />
               {errors[index]?.endDate && (
-                <p className="text-red-500 text-xs italic mt-1">
+                <p
+                  className="text-red-500 text-xs italic mt-1"
+                  id={`edu-endDate-error-${index}`}
+                  aria-live="polite"
+                >
                   {errors[index].endDate}
                 </p>
               )}
@@ -141,22 +206,10 @@ const Education = ({
       ))}
 
       <button
-        type="button"
         onClick={addEntry}
-        className="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition flex items-center"
+        className="mt-4 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-700 focus:ring-offset-2"
+        aria-label="Add another education entry"
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-5 w-5 mr-1"
-          viewBox="0 0 20 20"
-          fill="currentColor"
-        >
-          <path
-            fillRule="evenodd"
-            d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
-            clipRule="evenodd"
-          />
-        </svg>
         Add Another Education
       </button>
     </div>
@@ -170,7 +223,7 @@ Education.propTypes = {
       school: PropTypes.string.isRequired,
       degree: PropTypes.string.isRequired,
       startDate: PropTypes.string.isRequired,
-      endDate: PropTypes.string.isRequired,
+      endDate: PropTypes.string,
     })
   ).isRequired,
   handleChange: PropTypes.func.isRequired,

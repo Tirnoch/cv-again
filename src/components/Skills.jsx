@@ -29,26 +29,46 @@ const Skills = ({ skills, handleChange }) => {
 
   return (
     <div>
-      <div className="flex flex-col">
+      <h2 className="text-xl font-semibold mb-4" id="skills-heading">
+        Skills
+      </h2>
+      <div
+        className="flex flex-col"
+        role="region"
+        aria-labelledby="skills-heading"
+      >
         <div className="flex">
+          <label htmlFor="skill-input" className="sr-only">
+            Add skill
+          </label>
           <input
             type="text"
-            id="skill"
+            id="skill-input"
             value={newSkill}
             onChange={(e) => setNewSkill(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Add a skill (e.g. React, JavaScript, Design)"
-            className="border rounded p-2 flex-1"
+            className="border rounded p-2 flex-1 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            aria-describedby="skill-instructions"
           />
           <button
             onClick={addSkill}
-            className="ml-2 px-3 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+            className="ml-2 px-3 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-blue-700 focus:ring-offset-2"
+            aria-label="Add skill"
           >
             Add
           </button>
         </div>
+        <p id="skill-instructions" className="sr-only">
+          Type a skill and press Enter or click Add button to add it to your
+          list
+        </p>
 
-        <div className="mt-4 flex flex-wrap gap-2">
+        <div
+          className="mt-4 flex flex-wrap gap-2"
+          aria-live="polite"
+          aria-relevant="additions removals"
+        >
           {skills.length === 0 ? (
             <p className="text-gray-500 italic">
               No skills added yet. Add some skills above.
@@ -62,13 +82,15 @@ const Skills = ({ skills, handleChange }) => {
                 <span>{skill}</span>
                 <button
                   onClick={() => removeSkill(skill)}
-                  className="ml-2 text-gray-400 hover:text-red-500 focus:outline-none"
+                  className="ml-2 text-gray-400 hover:text-red-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1 rounded-full"
+                  aria-label={`Remove ${skill}`}
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     className="h-4 w-4"
                     viewBox="0 0 20 20"
                     fill="currentColor"
+                    aria-hidden="true"
                   >
                     <path
                       fillRule="evenodd"
