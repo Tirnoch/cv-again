@@ -8,20 +8,20 @@
 - [x] Display error messages for each validation error
 - [x] Add initial validation on component mount
 
-## 2. Enhanced UI/UX ⏳
+## 2. Enhanced UI/UX ✅
 
-- [ ] Add a print button to allow users to print or save their CV as PDF
-- [ ] Implement multiple CV templates that users can choose from
-- [ ] Add a preview mode showing how the CV will look when printed
-- [ ] Add a header with controls and template selection
-- [ ] Improve mobile layout and responsiveness
+- [x] Add a print button to allow users to print or save their CV as PDF
+- [x] Implement multiple CV templates that users can choose from
+- [x] Add a preview mode showing how the CV will look when printed
+- [x] Add a header with controls and template selection
+- [x] Improve mobile layout and responsiveness
 
-## 3. Data Management
+## 3. Data Management ✅
 
-- [ ] Add local storage to save the CV data between sessions
-- [ ] Implement export/import functionality for CV data
-- [ ] Add a reset button to clear all fields
-- [ ] Add autosave functionality
+- [x] Add local storage to save the CV data between sessions
+- [x] Implement export/import functionality for CV data
+- [x] Add a reset button to clear all fields
+- [x] Add autosave functionality
 
 ## 4. Additional Sections
 

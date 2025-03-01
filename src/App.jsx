@@ -3,27 +3,59 @@ import Personal from './components/Personal';
 import Experience from './components/Experience';
 import Education from './components/Education';
 import TemplateSelector from './components/TemplateSelector';
+import DataControls from './components/DataControls';
 
 const App = () => {
-  const [personal, setPersonal] = useState({
-    name: 'Damla OZ',
-    email: 'tahmin@baka.lim',
-    phone: '+90123456',
-    location: 'Bursa, Turkiye',
+  // Initialize state with localStorage data if available, otherwise use defaults
+  const [personal, setPersonal] = useState(() => {
+    const savedPersonal = localStorage.getItem('cv-personal');
+    return savedPersonal
+      ? JSON.parse(savedPersonal)
+      : {
+          name: 'Damla OZ',
+          email: 'tahmin@baka.lim',
+          phone: '+90123456',
+          location: 'Bursa, Turkiye',
+        };
   });
-  const [education, setEducation] = useState({
-    school: 'Mimar Sinan University',
-    degree: 'Sanat ve Sepet Isleri',
-    startDate: '01.01.2001',
-    endDate: '02.02.2002',
+
+  const [education, setEducation] = useState(() => {
+    const savedEducation = localStorage.getItem('cv-education');
+    return savedEducation
+      ? JSON.parse(savedEducation)
+      : {
+          school: 'Mimar Sinan University',
+          degree: 'Sanat ve Sepet Isleri',
+          startDate: '01.01.2001',
+          endDate: '02.02.2002',
+        };
   });
-  const [experience, setExperience] = useState({
-    company: 'Random Grafik Tasarim Atolyesi',
-    title: 'Grafik Tasarim Bacisi',
-    startDate: '03.03.2003',
-    endDate: '04.04.2004',
-    description: 'done this and that for some time for sure',
+
+  const [experience, setExperience] = useState(() => {
+    const savedExperience = localStorage.getItem('cv-experience');
+    return savedExperience
+      ? JSON.parse(savedExperience)
+      : {
+          company: 'Random Grafik Tasarim Atolyesi',
+          title: 'Grafik Tasarim Bacisi',
+          startDate: '03.03.2003',
+          endDate: '04.04.2004',
+          description: 'done this and that for some time for sure',
+        };
   });
+
+  // Save to localStorage whenever data changes (autosave)
+  useEffect(() => {
+    localStorage.setItem('cv-personal', JSON.stringify(personal));
+  }, [personal]);
+
+  useEffect(() => {
+    localStorage.setItem('cv-education', JSON.stringify(education));
+  }, [education]);
+
+  useEffect(() => {
+    localStorage.setItem('cv-experience', JSON.stringify(experience));
+  }, [experience]);
 
   // Validation state
   const [errors, setErrors] = useState({
@@ -156,6 +188,79 @@ const App = () => {
     setErrors(newErrors);
   };
 
+  // Data management functions
+  const resetAllData = () => {
+    // Reset to default values
+    setPersonal({
+      name: '',
+      email: '',
+      phone: '',
+      location: '',
+    });
+
+    setEducation({
+      school: '',
+      degree: '',
+      startDate: '',
+      endDate: '',
+    });
+
+    setExperience({
+      company: '',
+      title: '',
+      startDate: '',
+      endDate: '',
+      description: '',
+    });
+
+    // Clear localStorage
+    localStorage.removeItem('cv-personal');
+    localStorage.removeItem('cv-education');
+    localStorage.removeItem('cv-experience');
+  };
+
+  const exportData = () => {
+    // Create a data object with all CV information
+    const exportData = {
+      personal,
+      education,
+      experience,
+    };
+
+    // Convert to JSON and create a downloadable file
+    const dataStr = JSON.stringify(exportData, null, 2);
+    const dataUri =
+      'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+
+    // Create a download link and trigger click
+    const exportFileDefaultName = 'cv-data.json';
+    const linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
+    linkElement.click();
+  };
+
+  const importData = (fileContent) => {
+    try {
+      const importedData = JSON.parse(fileContent);
+
+      if (importedData.personal) {
+        setPersonal(importedData.personal);
+      }
+
+      if (importedData.education) {
+        setEducation(importedData.education);
+      }
+
+      if (importedData.experience) {
+        setExperience(importedData.experience);
+      }
+    } catch (error) {
+      console.error('Error importing data:', error);
+      alert('Failed to import data. Please check the file format.');
+    }
+  };
+
   // Validate all fields on component mount
   useEffect(() => {
     const newErrors = {
@@ -246,6 +351,12 @@ const App = () => {
     <>
       <div className="grid min-w-full md:grid-cols-[1fr_3fr] grid-cols-1 gap-4 min-h-screen print:block">
         <div className="m-4 flex flex-col print:hidden">
+          <DataControls
+            resetAllData={resetAllData}
+            exportData={exportData}
+            importData={importData}
+          />
+          <div className="my-4"></div>
           <Personal
             name={personal.name}
             email={personal.email}
