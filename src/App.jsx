@@ -273,6 +273,12 @@ const App = () => {
     console.log('New section order:', items);
   };
 
+  // Ensure each draggable ID is a string (react-beautiful-dnd requirement)
+  const getDraggableId = (id) => `draggable-${id}`;
+
+  // Use a fixed droppable ID to ensure consistency
+  const DROPPABLE_ID = 'droppable-sections';
+
   // Data management functions
   const resetAllData = () => {
     dispatch({
@@ -320,120 +326,116 @@ const App = () => {
 
   // Validate all fields on component mount
   useEffect(() => {
-    // Validate personal info
-    validateField(
-      'personal',
-      'name',
-      personal.name,
-      validateRequired,
-      'Name is required'
-    );
-    validateField(
-      'personal',
-      'email',
-      personal.email,
-      validateEmail,
-      'Please enter a valid email'
-    );
-    validateField(
-      'personal',
-      'phone',
-      personal.phone,
-      validatePhone,
-      'Please enter a valid phone number'
-    );
-    validateField(
-      'personal',
-      'location',
-      personal.location,
-      validateRequired,
-      'Location is required'
-    );
+    // Prevent validation from running on every render if values haven't changed
+    const validateAllFields = () => {
+      // Validate personal info
+      validateField(
+        'personal',
+        'name',
+        personal.name,
+        validateRequired,
+        'Name is required'
+      );
+      validateField(
+        'personal',
+        'email',
+        personal.email,
+        validateEmail,
+        'Please enter a valid email'
+      );
+      validateField(
+        'personal',
+        'phone',
+        personal.phone,
+        validatePhone,
+        'Please enter a valid phone number'
+      );
+      validateField(
+        'personal',
+        'location',
+        personal.location,
+        validateRequired,
+        'Location is required'
+      );
 
-    // Validate education entries
-    educationList.forEach((edu, index) => {
-      validateField(
-        'education',
-        'school',
-        edu.school,
-        validateRequired,
-        'School name is required',
-        index
-      );
-      validateField(
-        'education',
-        'degree',
-        edu.degree,
-        validateRequired,
-        'Degree is required',
-        index
-      );
-      validateField(
-        'education',
-        'startDate',
-        edu.startDate,
-        validateDate,
-        'Please enter a valid date (DD.MM.YYYY)',
-        index
-      );
-      validateField(
-        'education',
-        'endDate',
-        edu.endDate,
-        validateDate,
-        'Please enter a valid date (DD.MM.YYYY)',
-        index
-      );
-    });
+      // Validate education entries
+      educationList.forEach((edu, index) => {
+        validateField(
+          'education',
+          'school',
+          edu.school,
+          validateRequired,
+          'School name is required',
+          index
+        );
+        validateField(
+          'education',
+          'degree',
+          edu.degree,
+          validateRequired,
+          'Degree is required',
+          index
+        );
+        validateField(
+          'education',
+          'startDate',
+          edu.startDate,
+          validateDate,
+          'Please enter a valid date (DD.MM.YYYY)',
+          index
+        );
+        validateField(
+          'education',
+          'endDate',
+          edu.endDate,
+          validateDate,
+          'Please enter a valid date (DD.MM.YYYY)',
+          index
+        );
+      });
 
-    // Validate experience entries
-    experienceList.forEach((exp, index) => {
-      validateField(
-        'experience',
-        'company',
-        exp.company,
-        validateRequired,
-        'Company name is required',
-        index
-      );
-      validateField(
-        'experience',
-        'title',
-        exp.title,
-        validateRequired,
-        'Job title is required',
-        index
-      );
-      validateField(
-        'experience',
-        'startDate',
-        exp.startDate,
-        validateDate,
-        'Please enter a valid date (DD.MM.YYYY)',
-        index
-      );
-      validateField(
-        'experience',
-        'endDate',
-        exp.endDate,
-        validateDate,
-        'Please enter a valid date (DD.MM.YYYY)',
-        index
-      );
-    });
-  }, [
-    validateRequired,
-    validateEmail,
-    validatePhone,
-    validateDate,
-    personal.name,
-    personal.email,
-    personal.phone,
-    personal.location,
-    educationList,
-    experienceList,
-    validateField,
-  ]);
+      // Validate experience entries
+      experienceList.forEach((exp, index) => {
+        validateField(
+          'experience',
+          'company',
+          exp.company,
+          validateRequired,
+          'Company name is required',
+          index
+        );
+        validateField(
+          'experience',
+          'title',
+          exp.title,
+          validateRequired,
+          'Job title is required',
+          index
+        );
+        validateField(
+          'experience',
+          'startDate',
+          exp.startDate,
+          validateDate,
+          'Please enter a valid date (DD.MM.YYYY)',
+          index
+        );
+        validateField(
+          'experience',
+          'endDate',
+          exp.endDate,
+          validateDate,
+          'Please enter a valid date (DD.MM.YYYY)',
+          index
+        );
+      });
+    };
+
+    // Only run validation once on mount
+    validateAllFields();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Empty dependency array ensures this runs only once on mount
 
   // Combined CV data for template selector
   const cvData = {
@@ -453,118 +455,8 @@ const App = () => {
     const isCollapsed = collapsedSections[section.id] || false;
     const sectionId = `section-${section.id}`;
     const headingId = `heading-${section.id}`;
-
-    // Section header with collapse/expand and visibility toggle
-    const sectionHeader = (
-      <div
-        className="flex justify-between items-center bg-gray-100 p-2 rounded-t border-b"
-        role="region"
-        aria-labelledby={headingId}
-      >
-        <h2 id={headingId} className="text-lg font-semibold flex items-center">
-          <span
-            className="inline-block mr-2 text-gray-400 hover:text-gray-700"
-            title="Drag to reorder"
-            aria-hidden="true"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 6h16M4 12h16M4 18h16"
-              />
-            </svg>
-          </span>
-          {section.title}
-        </h2>
-        <div
-          className="flex gap-2"
-          role="toolbar"
-          aria-label={`${section.title} controls`}
-        >
-          <button
-            onClick={() => toggleSectionVisibility(section.id)}
-            className="p-1 text-gray-500 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 rounded"
-            title={section.visible ? 'Hide from CV' : 'Show in CV'}
-            aria-label={
-              section.visible
-                ? `Hide ${section.title} section from CV`
-                : `Show ${section.title} section in CV`
-            }
-            aria-pressed={section.visible}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              aria-hidden="true"
-            >
-              {section.visible ? (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                />
-              ) : (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"
-                />
-              )}
-            </svg>
-          </button>
-          <button
-            onClick={() => toggleSectionCollapse(section.id)}
-            className="p-1 text-gray-500 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 rounded"
-            title={isCollapsed ? 'Expand section' : 'Collapse section'}
-            aria-label={
-              isCollapsed
-                ? `Expand ${section.title} section`
-                : `Collapse ${section.title} section`
-            }
-            aria-expanded={!isCollapsed}
-            aria-controls={`content-${section.id}`}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              aria-hidden="true"
-            >
-              {isCollapsed ? (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M19 9l-7 7-7-7"
-                />
-              ) : (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M5 15l7-7 7 7"
-                />
-              )}
-            </svg>
-          </button>
-        </div>
-      </div>
-    );
+    // Use simple string IDs for draggable
+    const draggableId = `draggable-${section.id}`;
 
     // Only render content if not collapsed
     const sectionContent = !isCollapsed && (
@@ -627,7 +519,7 @@ const App = () => {
     );
 
     return (
-      <Draggable key={section.id} draggableId={section.id} index={index}>
+      <Draggable key={draggableId} draggableId={draggableId} index={index}>
         {(provided) => (
           <div
             ref={provided.innerRef}
@@ -639,11 +531,115 @@ const App = () => {
           >
             <div
               {...provided.dragHandleProps}
-              className="cursor-grab active:cursor-grabbing"
-              aria-label={`Drag ${section.title} section to reorder`}
-              tabIndex={0}
+              className="flex justify-between items-center bg-gray-100 p-2 rounded-t border-b cursor-grab active:cursor-grabbing"
+              role="region"
+              aria-labelledby={headingId}
             >
-              {sectionHeader}
+              <h2
+                id={headingId}
+                className="text-lg font-semibold flex items-center"
+              >
+                <span
+                  className="inline-block mr-2 text-gray-400 hover:text-gray-700"
+                  title="Drag to reorder"
+                  aria-hidden="true"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4 6h16M4 12h16M4 18h16"
+                    />
+                  </svg>
+                </span>
+                {section.title}
+              </h2>
+              <div
+                className="flex gap-2"
+                role="toolbar"
+                aria-label={`${section.title} controls`}
+              >
+                <button
+                  onClick={() => toggleSectionVisibility(section.id)}
+                  className="p-1 text-gray-500 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 rounded"
+                  title={section.visible ? 'Hide from CV' : 'Show in CV'}
+                  aria-label={
+                    section.visible
+                      ? `Hide ${section.title} section from CV`
+                      : `Show ${section.title} section in CV`
+                  }
+                  aria-pressed={section.visible}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    aria-hidden="true"
+                  >
+                    {section.visible ? (
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                      />
+                    ) : (
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"
+                      />
+                    )}
+                  </svg>
+                </button>
+                <button
+                  onClick={() => toggleSectionCollapse(section.id)}
+                  className="p-1 text-gray-500 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 rounded"
+                  title={isCollapsed ? 'Expand section' : 'Collapse section'}
+                  aria-label={
+                    isCollapsed
+                      ? `Expand ${section.title} section`
+                      : `Collapse ${section.title} section`
+                  }
+                  aria-expanded={!isCollapsed}
+                  aria-controls={`content-${section.id}`}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    aria-hidden="true"
+                  >
+                    {isCollapsed ? (
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 9l-7 7-7-7"
+                      />
+                    ) : (
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 15l7-7 7 7"
+                      />
+                    )}
+                  </svg>
+                </button>
+              </div>
             </div>
             {sectionContent}
           </div>
@@ -683,52 +679,55 @@ const App = () => {
   };
 
   return (
-    <>
-      <div className="grid min-w-full md:grid-cols-[1fr_3fr] grid-cols-1 gap-4 min-h-screen print:block">
-        <div className="m-4 flex flex-col print:hidden">
-          <DataControls
-            resetAllData={resetAllData}
-            exportData={exportData}
-            importData={importData}
-          />
-          <div className="my-4"></div>
+    <div className="grid min-w-full md:grid-cols-[1fr_3fr] grid-cols-1 gap-4 min-h-screen print:block">
+      <div className="m-4 flex flex-col print:hidden">
+        <DataControls
+          resetAllData={resetAllData}
+          exportData={exportData}
+          importData={importData}
+        />
+        <div className="my-4"></div>
 
-          <h2 id="form-sections-heading" className="sr-only">
-            CV Form Sections
-          </h2>
+        <h2 id="form-sections-heading" className="sr-only">
+          CV Form Sections
+        </h2>
 
-          <p className="text-sm text-gray-600 mb-2 italic">
-            Tip: You can drag and drop sections to reorder them
-          </p>
-
-          <DragDropContext onDragEnd={handleDragEnd}>
-            <Droppable droppableId="sections">
-              {(provided) => (
-                <div
-                  {...provided.droppableProps}
-                  ref={provided.innerRef}
-                  role="region"
-                  aria-labelledby="form-sections-heading"
-                  aria-describedby="drag-drop-instructions"
-                >
-                  <p id="drag-drop-instructions" className="sr-only">
-                    Drag and drop sections to reorder them. Use tab to navigate
-                    between sections and space to select a section for dragging.
-                  </p>
-                  {sectionOrder.map((section, index) =>
-                    renderSection(section, index)
-                  )}
-                  {provided.placeholder}
-                </div>
-              )}
-            </Droppable>
-          </DragDropContext>
+        {/* Debug: Output section order to help diagnose react-beautiful-dnd issues */}
+        <div className="sr-only">
+          {console.log('Section order:', sectionOrder)}
+          {console.log(
+            'Draggable IDs:',
+            sectionOrder.map((section) => getDraggableId(section.id))
+          )}
         </div>
-        <div className="m-4 flex flex-col border border-black shadow-md print:m-0 print:border-0 print:shadow-none print:w-full">
-          <TemplateSelector cvData={cvData} />
-        </div>
+
+        <DragDropContext onDragEnd={handleDragEnd}>
+          <Droppable droppableId={DROPPABLE_ID}>
+            {(provided) => (
+              <div
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+                role="region"
+                aria-labelledby="form-sections-heading"
+                aria-describedby="drag-drop-instructions"
+              >
+                <p id="drag-drop-instructions" className="sr-only">
+                  Drag and drop sections to reorder them. Use tab to navigate
+                  between sections and space to select a section for dragging.
+                </p>
+                {sectionOrder.map((section, index) =>
+                  renderSection(section, index)
+                )}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
       </div>
-    </>
+      <div className="m-4 flex flex-col border border-black shadow-md print:m-0 print:border-0 print:shadow-none print:w-full">
+        <TemplateSelector cvData={cvData} />
+      </div>
+    </div>
   );
 };
 

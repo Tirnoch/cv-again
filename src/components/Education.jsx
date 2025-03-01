@@ -171,7 +171,7 @@ const Education = ({
               >
                 End Date{' '}
                 <span className="text-sm font-normal">
-                  (or leave blank for "Present")
+                  (or leave blank for &quot;Present&quot;)
                 </span>
               </label>
               <input
