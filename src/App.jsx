@@ -543,9 +543,10 @@ const App = () => {
             role="group"
             aria-labelledby={headingId}
           >
+            {/* The header - this is the ONLY draggable part */}
             <div
               {...provided.dragHandleProps}
-              className="flex justify-between items-center bg-gray-100 p-2 rounded-t border-b cursor-grab active:cursor-grabbing drag-handle"
+              className="flex justify-between items-center bg-gray-100 p-2 rounded-t border-b cursor-grab active:cursor-grabbing"
               role="region"
               aria-labelledby={headingId}
             >

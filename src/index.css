@@ -13,6 +13,14 @@
     margin: 0;
     padding: 0;
   }
+
+  /* Ensure form elements are always interactive, even with drag and drop */
+  input,
+  textarea,
+  select,
+  button {
+    pointer-events: auto !important;
+  }
 }
 
 /* Print styles */
