@@ -1,26 +1,20 @@
 import PropTypes from 'prop-types';
 
-const Experience = ({
-  experienceList,
-  handleChange,
-  addEntry,
-  removeEntry,
-  errors,
-}) => {
+const Projects = ({ projects, handleChange, addEntry, removeEntry }) => {
   return (
     <div>
-      {experienceList.map((experience, index) => (
-        <div key={experience.id} className="mb-4 pb-4 border-b last:border-b-0">
+      {projects.map((project, index) => (
+        <div key={project.id} className="mb-4 pb-4 border-b last:border-b-0">
           <div className="flex justify-between items-center mb-2">
-            <h3 className="text-lg font-semibold">Experience {index + 1}</h3>
+            <h3 className="text-lg font-semibold">Project {index + 1}</h3>
             <button
               onClick={() => removeEntry(index)}
               className="text-red-500 hover:text-red-700 transition"
-              disabled={experienceList.length <= 1}
+              disabled={projects.length <= 1}
               title={
-                experienceList.length <= 1
-                  ? 'Cannot remove the only experience entry'
-                  : 'Remove this experience entry'
+                projects.length <= 1
+                  ? 'Cannot remove the only project'
+                  : 'Remove this project'
               }
             >
               <svg
@@ -41,50 +35,36 @@ const Experience = ({
           <div className="grid gap-4 md:grid-cols-2">
             <div>
               <label
-                htmlFor={`company-${index}`}
-                className="block mb-1 font-medium"
-              >
-                Company
-              </label>
-              <input
-                type="text"
-                id="company"
-                value={experience.company}
-                onChange={(e) => handleChange(e, index)}
-                placeholder="Company Name"
-                className={`border rounded p-2 w-full ${
-                  errors[index]?.company ? 'border-red-500' : ''
-                }`}
-              />
-              {errors[index]?.company && (
-                <p className="text-red-500 text-xs italic mt-1">
-                  {errors[index].company}
-                </p>
-              )}
-            </div>
-
-            <div>
-              <label
                 htmlFor={`title-${index}`}
                 className="block mb-1 font-medium"
               >
-                Job Title
+                Project Title
               </label>
               <input
                 type="text"
                 id="title"
-                value={experience.title}
+                value={project.title}
                 onChange={(e) => handleChange(e, index)}
-                placeholder="Job Title"
-                className={`border rounded p-2 w-full ${
-                  errors[index]?.title ? 'border-red-500' : ''
-                }`}
+                placeholder="Project Title"
+                className="border rounded p-2 w-full"
               />
-              {errors[index]?.title && (
-                <p className="text-red-500 text-xs italic mt-1">
-                  {errors[index].title}
-                </p>
-              )}
+            </div>
+
+            <div>
+              <label
+                htmlFor={`link-${index}`}
+                className="block mb-1 font-medium"
+              >
+                Project Link
+              </label>
+              <input
+                type="text"
+                id="link"
+                value={project.link}
+                onChange={(e) => handleChange(e, index)}
+                placeholder="https://..."
+                className="border rounded p-2 w-full"
+              />
             </div>
           </div>
 
@@ -99,18 +79,11 @@ const Experience = ({
               <input
                 type="text"
                 id="startDate"
-                value={experience.startDate}
+                value={project.startDate}
                 onChange={(e) => handleChange(e, index)}
                 placeholder="DD.MM.YYYY"
-                className={`border rounded p-2 w-full ${
-                  errors[index]?.startDate ? 'border-red-500' : ''
-                }`}
+                className="border rounded p-2 w-full"
               />
-              {errors[index]?.startDate && (
-                <p className="text-red-500 text-xs italic mt-1">
-                  {errors[index].startDate}
-                </p>
-              )}
             </div>
 
             <div>
@@ -123,18 +96,11 @@ const Experience = ({
               <input
                 type="text"
                 id="endDate"
-                value={experience.endDate}
+                value={project.endDate}
                 onChange={(e) => handleChange(e, index)}
                 placeholder="DD.MM.YYYY (or 'Present')"
-                className={`border rounded p-2 w-full ${
-                  errors[index]?.endDate ? 'border-red-500' : ''
-                }`}
+                className="border rounded p-2 w-full"
               />
-              {errors[index]?.endDate && (
-                <p className="text-red-500 text-xs italic mt-1">
-                  {errors[index].endDate}
-                </p>
-              )}
             </div>
           </div>
 
@@ -147,9 +113,9 @@ const Experience = ({
             </label>
             <textarea
               id="description"
-              value={experience.description}
+              value={project.description}
               onChange={(e) => handleChange(e, index)}
-              placeholder="Describe your role and responsibilities"
+              placeholder="Describe your project, technologies used, and your role"
               className="border rounded p-2 w-full h-24"
             />
           </div>
@@ -173,27 +139,26 @@ const Experience = ({
             clipRule="evenodd"
           />
         </svg>
-        Add Another Experience
+        Add Another Project
       </button>
     </div>
   );
 };
 
-Experience.propTypes = {
-  experienceList: PropTypes.arrayOf(
+Projects.propTypes = {
+  projects: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.string.isRequired,
-      company: PropTypes.string.isRequired,
       title: PropTypes.string.isRequired,
+      description: PropTypes.string.isRequired,
       startDate: PropTypes.string.isRequired,
       endDate: PropTypes.string.isRequired,
-      description: PropTypes.string.isRequired,
+      link: PropTypes.string.isRequired,
     })
   ).isRequired,
   handleChange: PropTypes.func.isRequired,
   addEntry: PropTypes.func.isRequired,
   removeEntry: PropTypes.func.isRequired,
-  errors: PropTypes.object,
 };
 
-export default Experience;
+export default Projects;

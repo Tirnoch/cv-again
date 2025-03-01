@@ -23,12 +23,12 @@
 - [x] Add a reset button to clear all fields
 - [x] Add autosave functionality
 
-## 4. Additional Sections
+## 4. Additional Sections ✅
 
-- [ ] Add more CV sections like Skills, Projects, Languages, etc.
-- [ ] Allow users to add multiple entries for education and experience
-- [ ] Make sections collapsible for better space management
-- [ ] Allow reordering of sections
+- [x] Add more CV sections like Skills, Projects, Languages, etc.
+- [x] Allow users to add multiple entries for education and experience
+- [x] Make sections collapsible for better space management
+- [x] Allow reordering of sections
 
 ## 5. Accessibility Improvements
 
