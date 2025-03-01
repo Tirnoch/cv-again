@@ -12,83 +12,25 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 // Import custom hooks
 import useFormValidation from './hooks/useValidation';
 import { useFormErrors } from './hooks/useFormErrors';
-import useLocalStorage from './hooks/useLocalStorage';
+import { useCV, ACTIONS } from './context/CVContext';
 
 const App = () => {
   // Use custom validation hooks
   const { validateEmail, validatePhone, validateRequired, validateDate } =
     useFormValidation();
 
-  // Use local storage hooks for state
-  const [personal, setPersonal] = useLocalStorage('cv-personal', {
-    name: 'Damla OZ',
-    email: 'tahmin@baka.lim',
-    phone: '+90123456',
-    location: 'Bursa, Turkiye',
-  });
-
-  // Multi-entry education data
-  const [educationList, setEducationList] = useLocalStorage(
-    'cv-education-list',
-    [
-      {
-        id: 'edu-1',
-        school: 'Mimar Sinan University',
-        degree: 'Sanat ve Sepet Isleri',
-        startDate: '01.01.2001',
-        endDate: '02.02.2002',
-      },
-    ]
-  );
-
-  // Multi-entry experience data
-  const [experienceList, setExperienceList] = useLocalStorage(
-    'cv-experience-list',
-    [
-      {
-        id: 'exp-1',
-        company: 'Random Grafik Tasarim Atolyesi',
-        title: 'Grafik Tasarim Bacisi',
-        startDate: '03.03.2003',
-        endDate: '04.04.2004',
-        description: 'done this and that for some time for sure',
-      },
-    ]
-  );
-
-  // Skills section
-  const [skills, setSkills] = useLocalStorage('cv-skills', []);
-
-  // Projects section
-  const [projects, setProjects] = useLocalStorage('cv-projects', [
-    {
-      id: 'proj-1',
-      title: '',
-      description: '',
-      startDate: '',
-      endDate: '',
-      link: '',
-    },
-  ]);
-
-  // Languages section
-  const [languages, setLanguages] = useLocalStorage('cv-languages', []);
-
-  // Section visibility and order
-  const [sectionOrder, setSectionOrder] = useLocalStorage('cv-section-order', [
-    { id: 'personal', title: 'Personal Details', visible: true },
-    { id: 'education', title: 'Education', visible: true },
-    { id: 'experience', title: 'Experience', visible: true },
-    { id: 'skills', title: 'Skills', visible: true },
-    { id: 'projects', title: 'Projects', visible: true },
-    { id: 'languages', title: 'Languages', visible: true },
-  ]);
-
-  // Collapsible sections state
-  const [collapsedSections, setCollapsedSections] = useLocalStorage(
-    'cv-collapsed-sections',
-    {}
-  );
+  // Use CV context for state management
+  const { state, dispatch } = useCV();
+  const {
+    personal,
+    educationList,
+    experienceList,
+    skills,
+    projects,
+    languages,
+    sectionOrder,
+    collapsedSections,
+  } = state;
 
   // Use custom error handling hook
   const { errors, validateField, removeFieldError } = useFormErrors({
@@ -100,7 +42,11 @@ const App = () => {
 
   const handlePersonalChange = (e) => {
     const { id, value } = e.target;
-    setPersonal({ ...personal, [id]: value });
+    dispatch({
+      type: ACTIONS.UPDATE_PERSONAL,
+      field: id,
+      value,
+    });
 
     // Validate as user types
     if (id === 'name') {
@@ -141,9 +87,12 @@ const App = () => {
   // Functions for multiple education entries
   const handleEducationChange = (e, index) => {
     const { id, value } = e.target;
-    const updatedList = [...educationList];
-    updatedList[index] = { ...updatedList[index], [id]: value };
-    setEducationList(updatedList);
+    dispatch({
+      type: ACTIONS.UPDATE_EDUCATION,
+      index,
+      field: id,
+      value,
+    });
 
     // Validate as user types
     validateEducationEntry(index, id, value);
@@ -192,9 +141,12 @@ const App = () => {
   // Functions for multiple experience entries
   const handleExperienceChange = (e, index) => {
     const { id, value } = e.target;
-    const updatedList = [...experienceList];
-    updatedList[index] = { ...updatedList[index], [id]: value };
-    setExperienceList(updatedList);
+    dispatch({
+      type: ACTIONS.UPDATE_EXPERIENCE,
+      index,
+      field: id,
+      value,
+    });
 
     // Validate as user types
     validateExperienceEntry(index, id, value);
@@ -251,60 +203,57 @@ const App = () => {
 
   // Skills management
   const handleSkillsChange = (newSkills) => {
-    setSkills(newSkills);
+    dispatch({
+      type: ACTIONS.UPDATE_SKILLS,
+      skills: newSkills,
+    });
   };
 
   // Project management
   const handleProjectChange = (e, index) => {
     const { id, value } = e.target;
-    const updatedList = [...projects];
-    updatedList[index] = { ...updatedList[index], [id]: value };
-    setProjects(updatedList);
+    dispatch({
+      type: ACTIONS.UPDATE_PROJECTS,
+      index,
+      field: id,
+      value,
+    });
   };
 
   const addProjectEntry = () => {
-    const newId = `proj-${Date.now()}`;
-    setProjects([
-      ...projects,
-      {
-        id: newId,
-        title: '',
-        description: '',
-        startDate: '',
-        endDate: '',
-        link: '',
-      },
-    ]);
+    dispatch({
+      type: ACTIONS.ADD_PROJECT,
+    });
   };
 
   const removeProjectEntry = (index) => {
-    if (projects.length <= 1) return;
-    const newList = [...projects];
-    newList.splice(index, 1);
-    setProjects(newList);
+    dispatch({
+      type: ACTIONS.REMOVE_PROJECT,
+      index,
+    });
   };
 
   // Languages management
   const handleLanguagesChange = (newLanguages) => {
-    setLanguages(newLanguages);
+    dispatch({
+      type: ACTIONS.UPDATE_LANGUAGES,
+      languages: newLanguages,
+    });
   };
 
   // Section visibility toggle
   const toggleSectionVisibility = (sectionId) => {
-    setSectionOrder(
-      sectionOrder.map((section) =>
-        section.id === sectionId
-          ? { ...section, visible: !section.visible }
-          : section
-      )
-    );
+    dispatch({
+      type: ACTIONS.TOGGLE_SECTION_VISIBILITY,
+      sectionId,
+    });
   };
 
   // Section collapse toggle
   const toggleSectionCollapse = (sectionId) => {
-    setCollapsedSections({
-      ...collapsedSections,
-      [sectionId]: !collapsedSections[sectionId],
+    dispatch({
+      type: ACTIONS.TOGGLE_SECTION_COLLAPSE,
+      sectionId,
     });
   };
 
@@ -316,62 +265,17 @@ const App = () => {
     const [reorderedItem] = items.splice(result.source.index, 1);
     items.splice(result.destination.index, 0, reorderedItem);
 
-    setSectionOrder(items);
+    dispatch({
+      type: ACTIONS.UPDATE_SECTION_ORDER,
+      sectionOrder: items,
+    });
   };
 
   // Data management functions
   const resetAllData = () => {
-    // Reset to default values
-    setPersonal({
-      name: '',
-      email: '',
-      phone: '',
-      location: '',
+    dispatch({
+      type: ACTIONS.RESET_ALL,
     });
-
-    setEducationList([
-      {
-        id: 'edu-1',
-        school: '',
-        degree: '',
-        startDate: '',
-        endDate: '',
-      },
-    ]);
-
-    setExperienceList([
-      {
-        id: 'exp-1',
-        company: '',
-        title: '',
-        startDate: '',
-        endDate: '',
-        description: '',
-      },
-    ]);
-
-    setSkills([]);
-
-    setProjects([
-      {
-        id: 'proj-1',
-        title: '',
-        description: '',
-        startDate: '',
-        endDate: '',
-        link: '',
-      },
-    ]);
-
-    setLanguages([]);
-
-    // Clear localStorage
-    localStorage.removeItem('cv-personal');
-    localStorage.removeItem('cv-education-list');
-    localStorage.removeItem('cv-experience-list');
-    localStorage.removeItem('cv-skills');
-    localStorage.removeItem('cv-projects');
-    localStorage.removeItem('cv-languages');
   };
 
   const exportData = () => {
@@ -402,34 +306,10 @@ const App = () => {
   const importData = (fileContent) => {
     try {
       const importedData = JSON.parse(fileContent);
-
-      if (importedData.personal) {
-        setPersonal(importedData.personal);
-      }
-
-      if (importedData.educationList) {
-        setEducationList(importedData.educationList);
-      }
-
-      if (importedData.experienceList) {
-        setExperienceList(importedData.experienceList);
-      }
-
-      if (importedData.skills) {
-        setSkills(importedData.skills);
-      }
-
-      if (importedData.projects) {
-        setProjects(importedData.projects);
-      }
-
-      if (importedData.languages) {
-        setLanguages(importedData.languages);
-      }
-
-      if (importedData.sectionOrder) {
-        setSectionOrder(importedData.sectionOrder);
-      }
+      dispatch({
+        type: ACTIONS.IMPORT_DATA,
+        data: importedData,
+      });
     } catch (error) {
       console.error('Error importing data:', error);
       alert('Failed to import data. Please check the file format.');
@@ -579,7 +459,23 @@ const App = () => {
         role="region"
         aria-labelledby={headingId}
       >
-        <h2 id={headingId} className="text-lg font-semibold">
+        <h2 id={headingId} className="text-lg font-semibold flex items-center">
+          <span className="inline-block mr-2 text-gray-400" aria-hidden="true">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"
+              />
+            </svg>
+          </span>
           {section.title}
         </h2>
         <div
@@ -751,50 +647,31 @@ const App = () => {
   };
 
   const addEducationEntry = () => {
-    const newId = `edu-${Date.now()}`;
-    setEducationList([
-      ...educationList,
-      {
-        id: newId,
-        school: '',
-        degree: '',
-        startDate: '',
-        endDate: '',
-      },
-    ]);
+    dispatch({
+      type: ACTIONS.ADD_EDUCATION,
+    });
   };
 
   const removeEducationEntry = (index) => {
-    if (educationList.length <= 1) return; // Always keep at least one entry
-    const newList = [...educationList];
-    newList.splice(index, 1);
-    setEducationList(newList);
-
+    dispatch({
+      type: ACTIONS.REMOVE_EDUCATION,
+      index,
+    });
     // Remove errors for the deleted entry
     removeFieldError('education', index);
   };
 
   const addExperienceEntry = () => {
-    const newId = `exp-${Date.now()}`;
-    setExperienceList([
-      ...experienceList,
-      {
-        id: newId,
-        company: '',
-        title: '',
-        startDate: '',
-        endDate: '',
-        description: '',
-      },
-    ]);
+    dispatch({
+      type: ACTIONS.ADD_EXPERIENCE,
+    });
   };
 
   const removeExperienceEntry = (index) => {
-    if (experienceList.length <= 1) return; // Always keep at least one entry
-    const newList = [...experienceList];
-    newList.splice(index, 1);
-    setExperienceList(newList);
-
+    dispatch({
+      type: ACTIONS.REMOVE_EXPERIENCE,
+      index,
+    });
     // Remove errors for the deleted entry
     removeFieldError('experience', index);
   };

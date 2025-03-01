@@ -40,7 +40,7 @@
 ## 6. Code Structure
 
 - [ ] Consider using a form library like Formik or React Hook Form
-- [ ] Implement a more robust state management solution
+- [x] Implement a more robust state management solution
 - [ ] Add unit tests for components
 - [x] Refactor validation logic into custom hooks
 
