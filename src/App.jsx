@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Personal from './components/Personal';
 import Education from './components/Education';
 import Experience from './components/Experience';
@@ -7,7 +7,8 @@ import DataControls from './components/DataControls';
 import Skills from './components/Skills';
 import Projects from './components/Projects';
 import Languages from './components/Languages';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+// Use @hello-pangea/dnd - a React 18 compatible fork of react-beautiful-dnd
+import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 
 // Import custom hooks
 import useFormValidation from './hooks/useValidation';
@@ -31,6 +32,19 @@ const App = () => {
     sectionOrder,
     collapsedSections,
   } = state;
+
+  // State to ensure the dnd context is only rendered after mount
+  const [isDndEnabled, setIsDndEnabled] = useState(false);
+
+  // Enable DnD after component mount to avoid hydration issues
+  useEffect(() => {
+    // Add a small delay to ensure React has fully rendered
+    const timer = setTimeout(() => {
+      setIsDndEnabled(true);
+    }, 50);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   // Use custom error handling hook
   const { errors, validateField, removeFieldError } = useFormErrors({
@@ -531,7 +545,7 @@ const App = () => {
           >
             <div
               {...provided.dragHandleProps}
-              className="flex justify-between items-center bg-gray-100 p-2 rounded-t border-b cursor-grab active:cursor-grabbing"
+              className="flex justify-between items-center bg-gray-100 p-2 rounded-t border-b cursor-grab active:cursor-grabbing drag-handle"
               role="region"
               aria-labelledby={headingId}
             >
@@ -701,28 +715,36 @@ const App = () => {
           )}
         </div>
 
-        <DragDropContext onDragEnd={handleDragEnd}>
-          <Droppable droppableId={DROPPABLE_ID}>
-            {(provided) => (
-              <div
-                {...provided.droppableProps}
-                ref={provided.innerRef}
-                role="region"
-                aria-labelledby="form-sections-heading"
-                aria-describedby="drag-drop-instructions"
-              >
-                <p id="drag-drop-instructions" className="sr-only">
-                  Drag and drop sections to reorder them. Use tab to navigate
-                  between sections and space to select a section for dragging.
-                </p>
-                {sectionOrder.map((section, index) =>
-                  renderSection(section, index)
-                )}
-                {provided.placeholder}
-              </div>
-            )}
-          </Droppable>
-        </DragDropContext>
+        {/* Only render DragDropContext after component is mounted */}
+        {isDndEnabled ? (
+          <DragDropContext onDragEnd={handleDragEnd}>
+            <Droppable droppableId={DROPPABLE_ID}>
+              {(provided) => (
+                <div
+                  {...provided.droppableProps}
+                  ref={provided.innerRef}
+                  role="region"
+                  aria-labelledby="form-sections-heading"
+                  aria-describedby="drag-drop-instructions"
+                >
+                  <p id="drag-drop-instructions" className="sr-only">
+                    Drag and drop sections to reorder them. Use tab to navigate
+                    between sections and space to select a section for dragging.
+                  </p>
+                  {sectionOrder.map((section, index) =>
+                    renderSection(section, index)
+                  )}
+                  {provided.placeholder}
+                </div>
+              )}
+            </Droppable>
+          </DragDropContext>
+        ) : (
+          // Render a loading state when DnD is not yet enabled
+          <div className="text-center py-4 text-gray-500">
+            Loading drag and drop functionality...
+          </div>
+        )}
       </div>
       <div className="m-4 flex flex-col border border-black shadow-md print:m-0 print:border-0 print:shadow-none print:w-full">
         <TemplateSelector cvData={cvData} />
